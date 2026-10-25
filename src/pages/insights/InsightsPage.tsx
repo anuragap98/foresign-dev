@@ -19,7 +19,7 @@ import { useNow } from '@/lib/derive'
 import { insights, type Insights, type RangeDays } from '@/lib/insights'
 import { dayKey, fmtDate } from '@/lib/time'
 import { cn } from '@/lib/utils'
-import { usePeople } from '@/store/settings'
+import { usePeople } from '@/store/people'
 import { useWorkspace } from '@/store/workspace'
 
 const RANGES: { value: string; label: string }[] = [

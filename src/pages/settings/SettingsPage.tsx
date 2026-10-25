@@ -33,15 +33,15 @@ import { Field, Input } from '@/components/ui/field'
 import { Page, PageHeader } from '@/components/ui/page'
 import { Segmented } from '@/components/ui/segmented'
 import { Switch } from '@/components/ui/switch'
-import { ME } from '@/data/seed'
+import { ME } from '@/lib/session'
 import type { Hue } from '@/data/types'
 import { downloadText, tasksCsv } from '@/lib/csv'
 import { dayKey } from '@/lib/time'
 import { cn } from '@/lib/utils'
 import { useFocus } from '@/store/focus'
 import { ACCENTS, resolvedTheme, useLook, WALLS, type ThemePref } from '@/store/look'
-import { FOCUS_LIMITS, useSettings, usePeopleById, usePerson, type NotifyPrefs } from '@/store/settings'
-import { useUi } from '@/store/ui'
+import { FOCUS_LIMITS, useSettings, type NotifyPrefs } from '@/store/settings'
+import { useActorsById, usePerson } from '@/store/people'
 import { useWorkspace } from '@/store/workspace'
 import { WallpaperThumb } from './WallpaperThumb'
 
@@ -161,11 +161,32 @@ function SectionNav({ active, onPick }: { active: string; onPick: (id: string) =
   )
 }
 
+const EMAIL = /^\S+@\S+\.\S+$/
+
+/** Edits save to your profile in the database shortly after you stop typing. */
 function ProfileSection() {
-  const profile = useSettings((s) => s.profile)
-  const setProfile = useSettings((s) => s.setProfile)
   const me = usePerson(ME)!
-  const emailBad = profile.email.trim() !== '' && !/^\S+@\S+\.\S+$/.test(profile.email.trim())
+  const updateMe = useWorkspace((s) => s.updateMe)
+  const [profile, setDraft] = useState({ name: me.name, email: me.email, role: me.role })
+  const [state, setState] = useState<'idle' | 'pending' | 'saved'>('idle')
+  const timer = useRef(0)
+  const emailBad = profile.email.trim() !== '' && !EMAIL.test(profile.email.trim())
+
+  useEffect(() => () => window.clearTimeout(timer.current), [])
+
+  const setProfile = (patch: Partial<typeof profile>) => {
+    const next = { ...profile, ...patch }
+    setDraft(next)
+    setState('pending')
+    window.clearTimeout(timer.current)
+    timer.current = window.setTimeout(() => {
+      const name = next.name.trim()
+      const email = next.email.trim()
+      // Keep what's saved for fields that are empty or not valid yet.
+      updateMe({ name: name || me.name, email: EMAIL.test(email) ? email : me.email, role: next.role.trim() || me.role })
+      setState('saved')
+    }, 600)
+  }
 
   return (
     <Card title="Profile" subtitle="How the team sees you">
@@ -197,7 +218,13 @@ function ProfileSection() {
         </Field>
       </div>
       <p id="email-hint" className={cn('mt-2 text-[12px]', emailBad ? 'text-danger' : 'text-ink-3')}>
-        {emailBad ? 'That email doesn’t look complete yet.' : 'Changes save as you type. Leave a field empty to use the original.'}
+        {emailBad
+          ? 'That email doesn’t look complete yet.'
+          : state === 'pending'
+            ? 'Saving…'
+            : state === 'saved'
+              ? 'Saved to your profile.'
+              : 'Changes save as you type. An empty field keeps what’s saved.'}
       </p>
     </Card>
   )
@@ -374,8 +401,7 @@ function FocusSection() {
 
 function DataSection() {
   const { tasks, projects } = useWorkspace()
-  const people = usePeopleById()
-  const openDialog = useUi((s) => s.openDialog)
+  const people = useActorsById()
   const [saved, setSaved] = useState<string | null>(null)
   const timer = useRef(0)
 
@@ -390,7 +416,7 @@ function DataSection() {
   }
 
   return (
-    <Card title="Data" subtitle="Everything stays in this browser">
+    <Card title="Data" subtitle="Exports, and where your data lives">
       <Row
         icon={Download}
         hue="blue"
@@ -401,12 +427,19 @@ function DataSection() {
           <Download /> Export
         </Button>
       </Row>
-      <Row icon={RotateCcw} hue="pink" title="Reset demo data" hint="Back to the sample workspace">
-        <Button variant="danger" size="sm" onClick={() => openDialog('reset')}>
-          Reset
-        </Button>
-      </Row>
-      <Row icon={Database} hue="teal" title="Where things are kept" hint="Tasks, events, settings and the look live in this browser’s local storage. Nothing is sent anywhere." />
+      {import.meta.env.DEV && (
+        <Row
+          icon={RotateCcw}
+          hue="pink"
+          title="Reset demo data"
+          hint={
+            <>
+              Rebuild the local database and sample workspace with <code className="rounded bg-fill-2 px-1 text-[12px]">npm run db:reset</code>
+            </>
+          }
+        />
+      )}
+      <Row icon={Database} hue="teal" title="Where things are kept" hint="Your workspace is stored in Pane’s database and shared with your team. Notification switches, focus lengths and the look stay on this device." />
     </Card>
   )
 }

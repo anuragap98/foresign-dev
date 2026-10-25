@@ -16,13 +16,13 @@ import { burnup, projectHealth, relDays, sortedMilestones } from '@/lib/projects
 import { STATUS_TONE } from '@/lib/tasks'
 import { dayKey, fmtDate, fmtDue, fmtTime, parseDay, relTime } from '@/lib/time'
 import { cn } from '@/lib/utils'
-import { usePeopleById } from '@/store/settings'
+import { useActorsById } from '@/store/people'
 import { useUi } from '@/store/ui'
 import { useWorkspace } from '@/store/workspace'
 import { ProjectTimeline } from './ProjectTimeline'
 
 function OverviewCard({ project: p, now }: { project: Project; now: Date }) {
-  const peopleById = usePeopleById()
+  const peopleById = useActorsById()
   const lead = peopleById[p.lead]
   const members = [p.lead, ...p.members.filter((m) => m !== p.lead)]
   return (
@@ -162,7 +162,7 @@ function ComingUpCard({ project: p, now }: { project: Project; now: Date }) {
 
 function ActivityCard({ project: p, now }: { project: Project; now: Date }) {
   const activity = useWorkspace((s) => s.activity)
-  const peopleById = usePeopleById()
+  const peopleById = useActorsById()
   const list = activity.filter((a) => a.projectId === p.id)
   return (
     <Card title="Recent activity">

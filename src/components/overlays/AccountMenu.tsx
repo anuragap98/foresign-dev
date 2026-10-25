@@ -1,10 +1,11 @@
-import { ChevronsUpDown, Keyboard, RotateCcw, Settings } from 'lucide-react'
+import { ChevronsUpDown, Keyboard, LogOut, Settings } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import { Avatar } from '@/components/ui/avatar'
 import { Menu, MenuContent, MenuItem, MenuRadioGroup, MenuRadioItem, MenuSeparator, MenuTrigger } from '@/components/ui/menu'
-import { ME } from '@/data/seed'
+import { ME } from '@/lib/session'
 import { useLook, type ThemePref } from '@/store/look'
-import { usePerson } from '@/store/settings'
+import { usePerson } from '@/store/people'
+import { supabase } from '@/lib/supabase'
 import { useUi } from '@/store/ui'
 
 export function AccountMenu() {
@@ -41,8 +42,15 @@ export function AccountMenu() {
           <MenuRadioItem value="auto">Match system</MenuRadioItem>
         </MenuRadioGroup>
         <MenuSeparator />
-        <MenuItem onSelect={() => openDialog('reset')} className="justify-between text-danger [&_svg]:!text-danger">
-          Reset demo data <RotateCcw />
+        <MenuItem
+          onSelect={async () => {
+            await supabase.auth.signOut()
+            // A clean reload drops everything cached for this account.
+            window.location.assign(window.location.pathname)
+          }}
+          className="justify-between"
+        >
+          Sign out <LogOut />
         </MenuItem>
       </MenuContent>
     </Menu>

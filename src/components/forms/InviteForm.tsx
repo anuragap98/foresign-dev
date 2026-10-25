@@ -4,7 +4,7 @@ import { Modal } from '@/components/ui/dialog'
 import { Field, Input, Select } from '@/components/ui/field'
 import type { Team } from '@/data/types'
 import { TEAMS } from '@/lib/team'
-import { usePeople } from '@/store/settings'
+import { usePeople } from '@/store/people'
 import { useUi } from '@/store/ui'
 import { useWorkspace, type NewInvite } from '@/store/workspace'
 

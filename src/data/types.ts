@@ -1,4 +1,5 @@
-export type Status = 'todo' | 'doing' | 'review' | 'done'
+/** Board columns use the first four; agents can also park tasks as blocked, failed or awaiting approval. */
+export type Status = 'todo' | 'doing' | 'review' | 'done' | 'blocked' | 'failed' | 'awaiting_approval'
 export type Priority = 'low' | 'medium' | 'high' | 'urgent'
 export type Hue = 'blue' | 'purple' | 'pink' | 'orange' | 'green' | 'teal' | 'indigo' | 'yellow'
 export type Team = 'Product' | 'Design' | 'Engineering' | 'Marketing'
@@ -6,9 +7,19 @@ export type Presence = 'online' | 'focus' | 'meeting' | 'away'
 export type ProjectStatus = 'planning' | 'progress' | 'review' | 'shipped'
 export type ProjectIcon = 'folder' | 'rocket' | 'leaf' | 'flame' | 'phone' | 'grid' | 'chart' | 'sparkle'
 export type EventKind = 'meeting' | 'focus' | 'review' | 'deadline' | 'team'
+export type ActorKind = 'person' | 'agent'
+export type TaskSource = 'human' | 'agent'
+export type RunStatus = 'running' | 'waiting' | 'succeeded' | 'failed' | 'cancelled'
+export type ArtifactKind = 'branch' | 'commit' | 'pull_request' | 'test_report' | 'deploy' | 'doc'
+export type GateKind = 'plan' | 'merge' | 'deploy' | 'custom'
+export type GateStatus = 'pending' | 'approved' | 'rejected' | 'changes_requested'
 
+/** An actor: a person or an agent. Anything with a "who" points at one. */
 export interface Person {
   id: string
+  kind: ActorKind
+  /** Set for people who can sign in. */
+  userId?: string
   name: string
   role: string
   team: Team
@@ -22,6 +33,10 @@ export interface Person {
   focusWeekH: number
   email: string
   hue: Hue
+  /** Agents only */
+  runtime?: string
+  model?: string
+  agentStatus?: 'running' | 'idle' | 'offline'
 }
 
 export interface Invite {
@@ -53,6 +68,12 @@ export interface Project {
   due: string // day key
   pinned: boolean
   milestones: Milestone[]
+  /** What agents should build (markdown). */
+  goal: string
+  repoUrl?: string
+  gates: { plan: boolean; merge: boolean; deploy: boolean }
+  budgetTokens?: number
+  budgetUsd?: number
 }
 
 export interface Subtask {
@@ -81,6 +102,15 @@ export interface Task {
   doneAt?: string
   subtasks: Subtask[]
   comments: Comment[]
+  description: string
+  acceptance: string
+  createdBy?: string
+  source: TaskSource
+  parentTaskId?: string
+  dependsOn: string[]
+  /** Order within its column. */
+  position: number
+  attempts: number
 }
 
 export interface CalEvent {
@@ -105,10 +135,11 @@ export interface Notice {
   id: string
   /** A person id, or 'pane' for reminders the app sends itself. */
   from: string
-  kind?: 'mention' | 'review' | 'update' | 'reminder'
+  kind?: 'mention' | 'review' | 'update' | 'reminder' | 'gate' | 'failure'
   text: string
   at: string
   read: boolean
+  dedupeKey?: string
 }
 
 export interface Activity {
@@ -119,11 +150,57 @@ export interface Activity {
   at: string
 }
 
+export interface Run {
+  id: string
+  projectId: string
+  taskId?: string
+  agentId: string
+  parentRunId?: string
+  status: RunStatus
+  startedAt: string
+  endedAt?: string
+  tokensIn: number
+  tokensOut: number
+  costUsd: number
+  model?: string
+  summary: string
+}
+
+export interface Artifact {
+  id: string
+  projectId: string
+  taskId?: string
+  runId?: string
+  kind: ArtifactKind
+  title: string
+  url?: string
+  status?: string
+  createdAt: string
+}
+
+export interface Gate {
+  id: string
+  projectId: string
+  kind: GateKind
+  taskId?: string
+  title: string
+  summary: string
+  status: GateStatus
+  requestedByRun?: string
+  requestedAt: string
+  decidedBy?: string
+  decidedAt?: string
+  note?: string
+}
+
 export const STATUS_LABEL: Record<Status, string> = {
   todo: 'To do',
   doing: 'In progress',
   review: 'In review',
   done: 'Done',
+  blocked: 'Blocked',
+  failed: 'Failed',
+  awaiting_approval: 'Awaiting approval',
 }
 
 export const PRIORITY_LABEL: Record<Priority, string> = {

@@ -2,16 +2,16 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Modal } from '@/components/ui/dialog'
 import { Field, Input, Select } from '@/components/ui/field'
-import { ME } from '@/data/seed'
+import { ME } from '@/lib/session'
 import { PRIORITY_LABEL, STATUS_LABEL, type Priority, type Status } from '@/data/types'
 import { dayKey } from '@/lib/time'
-import { usePeople } from '@/store/settings'
+import { useActors } from '@/store/people'
 import { useUi } from '@/store/ui'
 import { useWorkspace, type NewTask } from '@/store/workspace'
 
-const blank = (): NewTask => ({
+const blank = (projectId: string): NewTask => ({
   title: '',
-  projectId: 'tide',
+  projectId,
   assignee: ME,
   priority: 'medium',
   due: dayKey(),
@@ -24,8 +24,13 @@ function TaskFields({ onDone }: { onDone: () => void }) {
   const defaults = useUi((s) => s.taskDefaults)
   const projects = useWorkspace((s) => s.projects)
   const addTask = useWorkspace((s) => s.addTask)
-  const people = usePeople()
-  const [form, setForm] = useState<NewTask>(() => ({ ...blank(), ...defaults }))
+  // People and agents can both own a task.
+  const people = useActors()
+  const [form, setForm] = useState<NewTask>(() => {
+    // Start in your first pinned project that's still running, else the first running one.
+    const live = projects.filter((p) => p.status !== 'shipped')
+    return { ...blank((live.find((p) => p.pinned) ?? live[0])?.id ?? ''), ...defaults }
+  })
   const set = <K extends keyof NewTask>(key: K, value: NewTask[K]) => setForm((f) => ({ ...f, [key]: value }))
 
   return (

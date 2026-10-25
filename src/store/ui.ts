@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { NewEvent, NewTask } from './workspace'
 
-export type DialogName = 'task' | 'event' | 'project' | 'invite' | 'shortcuts' | 'reset' | null
+export type DialogName = 'task' | 'event' | 'project' | 'invite' | 'shortcuts' | null
 
 interface UiState {
   paletteOpen: boolean
@@ -10,6 +10,9 @@ interface UiState {
   eventDefaults: Partial<NewEvent>
   /** Card id currently blown up into the focus overlay. */
   expanded: string | null
+  /** Short message at the bottom of the screen (e.g. a save that failed). */
+  toast: string | null
+  showToast: (message: string | null) => void
 
   setPalette: (open: boolean) => void
   openDialog: (name: Exclude<DialogName, null>) => void
@@ -25,6 +28,8 @@ export const useUi = create<UiState>()((set) => ({
   taskDefaults: {},
   eventDefaults: {},
   expanded: null,
+  toast: null,
+  showToast: (toast) => set({ toast }),
 
   setPalette: (paletteOpen) => set({ paletteOpen }),
   openDialog: (dialog) => set({ dialog, paletteOpen: false }),

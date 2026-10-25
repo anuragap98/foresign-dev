@@ -14,7 +14,7 @@ import { STATUSES } from '@/lib/tasks'
 import { relTime } from '@/lib/time'
 import { cn } from '@/lib/utils'
 import { useFocus } from '@/store/focus'
-import { usePeople, usePeopleById } from '@/store/settings'
+import { useActorsById, useActors } from '@/store/people'
 import { useWorkspace } from '@/store/workspace'
 
 const bare = 'h-8 bg-transparent px-0 text-[15px] font-semibold hover:bg-transparent focus:bg-transparent focus:shadow-none'
@@ -60,8 +60,9 @@ function AddLine({ placeholder, button, onAdd, label }: { placeholder: string; b
 
 function TaskBody({ task }: { task: Task }) {
   const s = useWorkspace()
-  const people = usePeople()
-  const peopleById = usePeopleById()
+  // People and agents can both own a task.
+  const people = useActors()
+  const peopleById = useActorsById()
   const now = useNow(60_000)
   const subsDone = task.subtasks.filter((st) => st.done).length
 

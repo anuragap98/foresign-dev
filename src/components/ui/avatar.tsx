@@ -1,4 +1,5 @@
-import { usePerson } from '@/store/settings'
+import { Bot } from 'lucide-react'
+import { usePerson } from '@/store/people'
 import type { Presence } from '@/data/types'
 import { cn, initials } from '@/lib/utils'
 
@@ -23,19 +24,23 @@ interface AvatarProps {
   className?: string
 }
 
-/** Initials on a gradient of the person's hue; optional presence dot. */
+/**
+ * Initials on a gradient of the person's hue; optional presence dot.
+ * Agents get a rounded square and a small bot badge so they never pass for people.
+ */
 export function Avatar({ id, size = 28, presence = false, className }: AvatarProps) {
   const person = usePerson(id)
   if (!person) return null
   const dot = Math.max(8, Math.round(size * 0.3))
+  const agent = person.kind === 'agent'
   return (
     <span
       className={cn('relative inline-flex shrink-0', `hue-${person.hue}`, className)}
       style={{ width: size, height: size }}
-      title={person.name}
+      title={agent ? `${person.name} (agent${person.model ? ` · ${person.model}` : ''})` : person.name}
     >
       <span
-        className="flex size-full items-center justify-center rounded-full font-semibold text-white"
+        className={cn('flex size-full items-center justify-center font-semibold text-white', agent ? 'rounded-[30%]' : 'rounded-full')}
         style={{
           fontSize: size * 0.38,
           background: 'linear-gradient(145deg, color-mix(in srgb, var(--hue) 70%, #fff 30%), color-mix(in srgb, var(--hue) 75%, #000 25%))',
@@ -44,7 +49,16 @@ export function Avatar({ id, size = 28, presence = false, className }: AvatarPro
       >
         {initials(person.name)}
       </span>
-      {presence && (
+      {agent && size >= 20 && (
+        <span
+          className="absolute -right-1 -bottom-1 flex items-center justify-center rounded-full bg-[var(--glass-solid)] text-ink"
+          style={{ width: size * 0.48, height: size * 0.48, boxShadow: '0 0 0 1.5px var(--av-ring)' }}
+          aria-hidden
+        >
+          <Bot style={{ width: size * 0.32, height: size * 0.32 }} strokeWidth={2.4} />
+        </span>
+      )}
+      {presence && !agent && (
         <span
           className={cn('absolute -right-px -bottom-px rounded-full', PRESENCE_DOT[person.presence])}
           style={{ width: dot, height: dot, boxShadow: '0 0 0 2px var(--av-ring)' }}

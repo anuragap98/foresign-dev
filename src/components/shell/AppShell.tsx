@@ -7,8 +7,6 @@ import { TaskForm } from '@/components/forms/TaskForm'
 import { CommandPalette } from '@/components/overlays/CommandPalette'
 import { FocusIsland } from '@/components/overlays/FocusIsland'
 import { ShortcutsDrawer } from '@/components/overlays/Shortcuts'
-import { Confirm } from '@/components/ui/dialog'
-import { useUi } from '@/store/ui'
 import { useWorkspace } from '@/store/workspace'
 import { NAV } from './nav'
 import { Sidebar } from './Sidebar'
@@ -20,21 +18,6 @@ import { Wallpaper } from './Wallpaper'
 
 const DRAWER_SECTIONS = new Set(['tasks', 'calendar', 'team'])
 
-function ResetConfirm() {
-  const open = useUi((s) => s.dialog === 'reset')
-  const closeDialog = useUi((s) => s.closeDialog)
-  const reset = useWorkspace((s) => s.reset)
-  return (
-    <Confirm
-      open={open}
-      onOpenChange={(o) => !o && closeDialog()}
-      title="Reset demo data?"
-      description="Tasks, events and your edits go back to the sample workspace."
-      confirmLabel="Reset"
-      onConfirm={reset}
-    />
-  )
-}
 
 export function AppShell() {
   const { pathname } = useLocation()
@@ -82,7 +65,6 @@ export function AppShell() {
       <ProjectForm />
       <InviteForm />
       <ShortcutsDrawer />
-      <ResetConfirm />
     </>
   )
 }

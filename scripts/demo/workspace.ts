@@ -11,14 +11,20 @@ import type {
   Project,
   Status,
   Task,
-} from './types'
+} from '@/data/types'
+
+// The sample predates agents: these are the app types without the agent-era fields,
+// which the seed script fills in when it writes rows.
+type DemoPerson = Omit<Person, 'kind'>
+type DemoProject = Omit<Project, 'goal' | 'gates'>
+type DemoTask = Omit<Task, 'description' | 'acceptance' | 'source' | 'dependsOn' | 'position' | 'attempts'>
 
 export const ME = 'lin'
 
 /* People are static: presence notes are relative to when the app loads. */
 const soon = (mins: number) => `until ${fmtTime(new Date(Date.now() + mins * MIN))}`
 
-export const PEOPLE: Person[] = [
+export const PEOPLE: DemoPerson[] = [
   { id: 'lin', name: 'Lin Zhao', role: 'Product Lead', team: 'Product', presence: 'online', city: 'London', tz: 'Europe/London', capacityH: 32, focusWeekH: 6, email: 'lin@pane.app', hue: 'blue' },
   { id: 'nia', name: 'Nia Okoro', role: 'Design Lead', team: 'Design', presence: 'focus', presenceNote: soon(47), city: 'Lagos', tz: 'Africa/Lagos', capacityH: 32, focusWeekH: 4, email: 'nia@pane.app', hue: 'purple' },
   { id: 'elise', name: 'Elise Marchand', role: 'Product Designer', team: 'Design', presence: 'online', city: 'Lyon', tz: 'Europe/Paris', capacityH: 36, focusWeekH: 9, email: 'elise@pane.app', hue: 'pink' },
@@ -33,12 +39,12 @@ export const PEOPLE: Person[] = [
   { id: 'malik', name: 'Malik Johnson', role: 'QA Engineer', team: 'Engineering', presence: 'away', city: 'Atlanta', tz: 'America/New_York', capacityH: 36, focusWeekH: 5, email: 'malik@pane.app', hue: 'purple' },
 ]
 
-export const PEOPLE_BY_ID = Object.fromEntries(PEOPLE.map((p) => [p.id, p])) as Record<string, Person>
+export const PEOPLE_BY_ID = Object.fromEntries(PEOPLE.map((p) => [p.id, p])) as Record<string, DemoPerson>
 
 export interface Workspace {
   seededOn: string
-  projects: Project[]
-  tasks: Task[]
+  projects: DemoProject[]
+  tasks: DemoTask[]
   events: CalEvent[]
   focusLog: FocusEntry[]
   notices: Notice[]
@@ -186,7 +192,7 @@ export function buildSeed(now = new Date()): Workspace {
   const day = (n: number) => dayKey(addDays(today, n))
   const ago = (mins: number) => new Date(now.getTime() - mins * MIN).toISOString()
 
-  const projects: Project[] = [
+  const projects: DemoProject[] = [
     {
       id: 'orbit', name: 'Orbit 2.0 launch', hue: 'purple', icon: 'rocket', status: 'progress', pinned: true,
       summary: 'Everything the public sees on launch day: site, film, press kit and the waitlist email.',
@@ -252,8 +258,8 @@ export function buildSeed(now = new Date()): Workspace {
     return `${projectId}-${counters[projectId]}`
   }
 
-  const tasks: Task[] = [
-    ...OPEN.map(([title, projectId, assignee, priority, status, dueIn, estH, subsDone, comments]): Task => {
+  const tasks: DemoTask[] = [
+    ...OPEN.map(([title, projectId, assignee, priority, status, dueIn, estH, subsDone, comments]): DemoTask => {
       const id = nextId(projectId)
       return {
         id, title, projectId, assignee, priority, status, estH,
@@ -265,7 +271,7 @@ export function buildSeed(now = new Date()): Workspace {
           : [],
       }
     }),
-    ...[...DONE, ...HISTORY, ...archiveRows(today)].map(([title, projectId, assignee, daysAgo], i): Task => {
+    ...[...DONE, ...HISTORY, ...archiveRows(today)].map(([title, projectId, assignee, daysAgo], i): DemoTask => {
       const id = nextId(projectId)
       const doneAt = daysAgo === 0 ? ago(40 + i * 55) : at(addDays(today, -daysAgo), 11 + (i % 6), (i * 13) % 60).toISOString()
       return {

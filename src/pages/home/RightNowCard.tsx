@@ -3,7 +3,8 @@ import { Link } from 'react-router'
 import { Avatar, PRESENCE_LABEL } from '@/components/ui/avatar'
 import { Card } from '@/components/ui/card'
 import { Segmented } from '@/components/ui/segmented'
-import { ME, PEOPLE, PEOPLE_BY_ID } from '@/data/seed'
+import { ME } from '@/lib/session'
+import { useActorsById, usePeople } from '@/store/people'
 import type { Presence } from '@/data/types'
 import { useNow } from '@/lib/derive'
 import { gsap, prefersReducedMotion, useGSAP } from '@/lib/gsap'
@@ -27,7 +28,9 @@ export function RightNowCard({ className }: { className?: string }) {
     { scope: list, dependencies: [tab] },
   )
 
-  const people = PEOPLE.filter((p) => p.id !== ME && p.presence !== 'away')
+  const actors = useActorsById()
+  const people = usePeople()
+    .filter((p) => p.id !== ME && p.presence !== 'away')
     .sort((a, b) => ORDER.indexOf(a.presence) - ORDER.indexOf(b.presence))
     .slice(0, 6)
 
@@ -67,7 +70,7 @@ export function RightNowCard({ className }: { className?: string }) {
                 <Avatar id={a.who} size={32} />
                 <span className="min-w-0 text-[14px]">
                   <span className="block leading-snug">
-                    <span className="font-semibold">{PEOPLE_BY_ID[a.who]?.name.split(' ')[0]}</span> {a.text}
+                    <span className="font-semibold">{actors[a.who]?.name.split(' ')[0]}</span> {a.text}
                   </span>
                   <span className="block text-[12px] text-ink-3">
                     {relTime(a.at, now.getTime())} · {projects.find((p) => p.id === a.projectId)?.name}

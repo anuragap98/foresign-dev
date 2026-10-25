@@ -1,17 +1,33 @@
 # Pane
 
-A liquid-glass team workspace: Home dashboard, tasks, calendar, projects, insights, team and settings.
-The feature reference lives in [docs/pane-reference-spec.md](docs/pane-reference-spec.md).
+A liquid-glass workspace for teams and the coding agents working with them: Home, tasks, calendar,
+projects, insights, team and settings, backed by Postgres. Agents will report their plans, runs and
+artifacts into it (see the roadmap below).
+The original feature reference is in [docs/pane-reference-spec.md](docs/pane-reference-spec.md).
+
+## Run it locally
+
+Needs Node 22+ and Docker Desktop running.
 
 ```bash
 npm install
+npm run db:start   # local Supabase in Docker (first run downloads the images)
+npm run db:seed    # demo workspace + writes .env.local
 npm run dev
 ```
+
+Open http://localhost:5173 and choose **Use the local demo account**. Sign-in links sent by email
+land in Mailpit at http://127.0.0.1:54324, and Supabase Studio is at http://127.0.0.1:54323.
+
+- `npm run db:reset` rebuilds the schema from `supabase/migrations` and re-seeds. The sample is dated
+  relative to when it was seeded, so re-seed to get a fresh "today".
+- `npm run db:stop` stops the containers.
 
 ## Stack
 
 - React 19 + Vite + TypeScript, Tailwind CSS v4
-- Zustand for state (`src/store`), persisted to `localStorage`
+- Supabase: Postgres with row level security, Auth, Realtime (`supabase/`)
+- TanStack Query loads the workspace; Zustand holds it in memory with instant (optimistic) saves (`src/store`)
 - Radix primitives wrapped as shadcn-style components (`src/components/ui`)
 - GSAP (+ Flip) for motion, hand-written SVG charts (`src/components/charts`)
 
@@ -21,8 +37,12 @@ npm run dev
 |---|---|
 | `src/index.css` | Design tokens, dark/light themes, accents, wallpapers, glass classes |
 | `src/lib/liquid.ts`, `src/components/glass/Glass.tsx` | Liquid-glass refraction: per-surface SVG displacement maps (Chromium), CSS blur elsewhere |
-| `src/data/seed.ts` | Sample workspace, dated relative to today |
-| `src/store/workspace.ts` | Tasks, events, projects, focus log; re-dates the sample data each new day |
+| `supabase/migrations` | Database schema: people and agents as actors, projects, tasks with dependencies, runs, run events, artifacts, gates, row level security |
+| `scripts/seed.ts`, `scripts/demo/` | Seeds the demo workspace, including the agent-built "Ledger API" project |
+| `src/app/Boot.tsx`, `src/app/SignIn.tsx` | Sign-in, loading your workspace, keeping it live with Realtime |
+| `src/lib/api/snapshot.ts` | Reads the workspace and maps database rows to app types |
+| `src/store/workspace.ts` | The workspace in memory; every action updates the screen, then saves to Supabase |
+| `src/store/people.ts` | `usePeople()` (people), `useActors()` (people and agents), `usePerson(id)` |
 | `src/store/focus.ts` | Focus timer state shared by the Home card and the island |
 | `src/components/shell` | Sidebar (sliding nav lens), toolbar, tab bar, wallpaper, hotkeys |
 | `src/components/overlays` | Command palette, notifications, account menu, shortcuts, focus island |
@@ -36,9 +56,20 @@ npm run dev
 | `src/pages/team`, `src/lib/team.ts` | Team: person cards (presence, local time, workload), team filter, profile drawer, pending invites |
 | `src/components/forms/InviteForm.tsx` | Invite form (rejects people already on the team or already invited) |
 | `src/pages/settings` | Settings: profile, notifications, appearance (wallpaper previews), focus lengths, CSV export and reset |
-| `src/store/settings.ts` | Profile, notification switches and focus lengths; `usePeople()` / `usePerson()` apply your edited profile |
+| `src/store/settings.ts` | Notification switches and focus lengths (kept on this device) |
 | `src/components/shell/useReminders.ts` | Meeting, due-today and daily-digest reminders, driven by the notification switches |
 | `src/pages/insights`, `src/lib/insights.ts` | Insights: KPIs over 7/30/90 days, throughput, by project, focus, workload, on time, slowest tasks, CSV export |
 | `src/components/charts` | Hand-written SVG charts: rings, week bars, burn-up, line, day bars, donut |
 
-All pages in the reference spec are built. Teammates' focus hours are sample figures; everything else is computed from the workspace data.
+Teammates' focus hours in Insights are sample figures; everything else is computed from the workspace data.
+
+## Roadmap
+
+The plan for agentic development: agents (Claude Code, Codex, Cursor…) plan and carry out the work
+while Pane tracks it, with human approval gates.
+
+1. **Agent-ready backend** (done): schema, sign-in, data from Postgres, demo agent project.
+2. **Agent connection**: Pane MCP server, per-project agent tokens, Claude Code hooks and OpenTelemetry ingest.
+3. **Observability views**: run tree and trace timeline, agent-aware board, plan view and approval gates, agent metrics.
+4. **Hardening**: tests, CI, error monitoring, staging, budgets and alerts.
+5. **Software factory**: Pane dispatches work to agents it starts itself.

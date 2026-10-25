@@ -1,5 +1,7 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { createHashRouter, Navigate, RouterProvider } from 'react-router'
+import { Boot } from '@/app/Boot'
 import { AppShell } from '@/components/shell/AppShell'
 import { HomePage } from '@/pages/home/HomePage'
 import { applyLook, useLook } from '@/store/look'
@@ -40,7 +42,15 @@ function useLookSync() {
   }, [])
 }
 
+const queryClient = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: true, retry: 2 } } })
+
 export default function App() {
   useLookSync()
-  return <RouterProvider router={router} />
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Boot>
+        <RouterProvider router={router} />
+      </Boot>
+    </QueryClientProvider>
+  )
 }

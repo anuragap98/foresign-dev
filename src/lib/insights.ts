@@ -1,4 +1,4 @@
-import { ME } from '@/data/seed'
+import { ME } from '@/lib/session'
 import type { FocusEntry, Person, Project, Task } from '@/data/types'
 import { workload } from './team'
 import { addDays, DAY, dayKey, startOfDay } from './time'

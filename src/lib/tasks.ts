@@ -1,4 +1,5 @@
-import { ME, PEOPLE_BY_ID } from '@/data/seed'
+import { ME } from '@/lib/session'
+import { actorById } from '@/store/people'
 import type { Priority, Project, Status, Task } from '@/data/types'
 import type { TaskFilters, TasksSort } from '@/store/tasksView'
 import { addDays, dayKey, startOfWeek } from './time'
@@ -11,6 +12,9 @@ export const STATUS_TONE: Record<Status, string> = {
   doing: 'var(--blue)',
   review: 'var(--purple)',
   done: 'var(--green)',
+  blocked: 'var(--orange)',
+  failed: 'var(--danger)',
+  awaiting_approval: 'var(--yellow)',
 }
 
 const PRIORITY_RANK: Record<Priority, number> = { urgent: 0, high: 1, medium: 2, low: 3 }
@@ -22,7 +26,7 @@ export function matchesFilters(t: Task, f: TaskFilters, projects: Project[]) {
   const q = f.q.trim().toLowerCase()
   if (!q) return true
   const project = projects.find((p) => p.id === t.projectId)?.name ?? ''
-  const person = PEOPLE_BY_ID[t.assignee]?.name ?? ''
+  const person = actorById(t.assignee)?.name ?? ''
   return [t.title, project, person].some((s) => s.toLowerCase().includes(q))
 }
 
@@ -34,10 +38,15 @@ export function sortTasks(tasks: Task[], sort: TasksSort) {
   return [...tasks].sort((a, b) => (sort === 'due' ? byDue(a, b) || byPrio(a, b) : byPrio(a, b) || byDue(a, b)))
 }
 
+/** Board order; ties (which shouldn't happen) fall back to age so the order is stable. */
+export const byPosition = (a: Task, b: Task) => a.position - b.position || a.createdAt.localeCompare(b.createdAt)
+
 /** Done tasks read newest first; other columns keep their hand-sorted order. */
 export function columnTasks(tasks: Task[], status: Status) {
   const col = tasks.filter((t) => t.status === status)
-  return status === 'done' ? col.sort((a, b) => (b.doneAt ?? '').localeCompare(a.doneAt ?? '')) : col
+  return status === 'done'
+    ? col.sort((a, b) => (b.doneAt ?? '').localeCompare(a.doneAt ?? ''))
+    : col.sort(byPosition)
 }
 
 export function taskStats(tasks: Task[], now: Date) {

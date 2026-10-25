@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { ME } from '@/data/seed'
+import { ME } from '@/lib/session'
 import { eventsOn } from '@/lib/derive'
 import { addDays, dayKey, MIN } from '@/lib/time'
 import { useSettings } from '@/store/settings'

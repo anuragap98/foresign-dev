@@ -10,7 +10,7 @@ import { eventHue, isPast, isVideo, KIND_ICON } from '@/lib/calendar'
 import { eventEnd, useNow } from '@/lib/derive'
 import { fmtDate, fmtTime } from '@/lib/time'
 import { cn } from '@/lib/utils'
-import { usePeopleById } from '@/store/settings'
+import { useActorsById } from '@/store/people'
 import { useWorkspace } from '@/store/workspace'
 
 function Tile({ label, children, className }: { label: string; children: ReactNode; className?: string }) {
@@ -26,7 +26,7 @@ export function EventDrawer({ eventId }: { eventId?: string }) {
   const event = useWorkspace((s) => s.events.find((e) => e.id === eventId))
   const projects = useWorkspace((s) => s.projects)
   const removeEvent = useWorkspace((s) => s.removeEvent)
-  const peopleById = usePeopleById()
+  const peopleById = useActorsById()
   const navigate = useNavigate()
   const now = useNow(30_000)
   const [inCall, setInCall] = useState<string | null>(null)

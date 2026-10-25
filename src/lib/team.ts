@@ -1,4 +1,5 @@
-import { ME, PEOPLE_BY_ID } from '@/data/seed'
+import { ME } from '@/lib/session'
+import { actorById } from '@/store/people'
 import type { Hue, Person, Presence, Task, Team } from '@/data/types'
 
 export const TEAMS: Team[] = ['Product', 'Design', 'Engineering', 'Marketing']
@@ -36,7 +37,7 @@ function tzOffset(tz: string, at: Date) {
 export function localClock(p: Person, now: Date) {
   const time = now.toLocaleTimeString('en-US', { timeZone: p.tz, hour: 'numeric', minute: '2-digit' })
   const hour = Number(now.toLocaleString('en-US', { timeZone: p.tz, hour: 'numeric', hourCycle: 'h23' }))
-  const diffMin = tzOffset(p.tz, now) - tzOffset(PEOPLE_BY_ID[ME].tz, now)
+  const diffMin = tzOffset(p.tz, now) - tzOffset(actorById(ME)?.tz ?? 'UTC', now)
   const h = Math.abs(diffMin) / 60
   const amount = `${Number.isInteger(h) ? h : h.toFixed(1)}h`
   const relative =

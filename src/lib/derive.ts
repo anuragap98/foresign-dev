@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ME } from '@/data/seed'
+import { ME } from '@/lib/session'
 import type { CalEvent, FocusEntry, Project, Task } from '@/data/types'
 import { addDays, dayKey, MIN, startOfDay, startOfWeek } from './time'
 
