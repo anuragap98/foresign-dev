@@ -1,0 +1,411 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* Tailwind utilities backed by the runtime theme variables below */
+@theme inline {
+  --font-sans: var(--font);
+  --font-display: var(--font-display);
+
+  --color-ink: var(--text);
+  --color-ink-2: var(--text-2);
+  --color-ink-3: var(--text-3);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-fill: var(--fill);
+  --color-fill-2: var(--fill-2);
+  --color-fill-hover: var(--fill-hover);
+  --color-well: var(--well);
+  --color-sep: var(--sep);
+  --color-danger: var(--danger);
+  --color-scrim: var(--scrim);
+
+  --radius-card: 30px;
+  --radius-panel: 24px;
+  --radius-tile: 18px;
+  --radius-chip: 12px;
+
+  --ease-glass: cubic-bezier(0.22, 0.8, 0.24, 1);
+  --ease-spring: cubic-bezier(0.34, 1.45, 0.55, 1);
+}
+
+/* ------------------------------------------------------------------ tokens */
+
+:root {
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --fs-title: clamp(34px, 2.2vw + 14px, 58px);
+  --gap: clamp(12px, 0.6vw + 8px, 20px);
+  --gutter: clamp(14px, 1.4vw + 6px, 32px);
+  --side-w: 252px;
+  --frame: 1840px;
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0a0a0c;
+  --text: #f5f5f7;
+  --text-2: #ebebf5b3;
+  --text-3: #ebebf58c;
+  --glass: rgb(26 26 36 / var(--glass-a, 0.42));
+  --glass-chrome: rgb(28 28 38 / var(--chrome-a, 0.36));
+  --glass-thick: #1a1a1edb;
+  --glass-solid: #1c1c20;
+  --blur: 14px;
+  --blur-thick: 30px;
+  --sat: 175%;
+  --bright: 0.95;
+  --sheen: #ffffff1a;
+  --depth: inset 0 1px 1px #ffffff4d, inset 0 -1px 1px #ffffff1a, inset 3px 4px 12px -6px #ffffff3d,
+    inset -4px -6px 14px -8px #ffffff1f, inset 0 -16px 28px -18px #00000073;
+  --shadow: 0 1px 2px #0000004d, 0 24px 48px -22px #000000bf;
+  --shadow-lift: 0 2px 6px #00000059, 0 28px 56px -20px #000c;
+  --fill: #9696af29;
+  --fill-2: #9696af42;
+  --fill-hover: #9696af1f;
+  --well: #9696af29;
+  --sep: #ffffff1a;
+  --scrim: #0006;
+  --lens: linear-gradient(180deg, #ffffff4d, #ffffff1a);
+  --lens-glow: inset 0 1px 1px #ffffff8c, inset 0 -2px 5px #ffffff1f, inset 0 0 0 0.5px #ffffff4d,
+    0 8px 18px -8px #0009;
+  --av-ring: #1e202cf2;
+  --gel-hi: #fff3;
+  --island: #050507;
+
+  --blue: #4b8eff;
+  --purple: #a07cff;
+  --pink: #f2649f;
+  --orange: #ff8a3d;
+  --green: #34c46b;
+  --teal: #22c3c0;
+  --indigo: #7a7af0;
+  --yellow: #f5b82e;
+  --danger: #ff5a64;
+  --ring-tasks: #ff2d6f;
+  --ring-focus: #4ade6b;
+  --ring-meet: #22c3f0;
+  --timer: #ffb340;
+  --prio-urgent: #ff8b92;
+  --prio-high: #ffb27a;
+  --prio-medium: #8fb8ff;
+  --prio-low: var(--text-3);
+  --delta-up: #5fd88a;
+  --delta-down: #ff8189;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --bg: #e4e9f4;
+  --text: #0f1017;
+  --text-2: #161826b3;
+  --text-3: #1618268f;
+  --glass: rgb(255 255 255 / var(--glass-a, 0.32));
+  --glass-chrome: rgb(255 255 255 / var(--chrome-a, 0.26));
+  --glass-thick: #fafcffc2;
+  --glass-solid: #f3f5fa;
+  --blur: 12px;
+  --blur-thick: 28px;
+  --sat: 190%;
+  --bright: 1.06;
+  --sheen: #ffffff57;
+  --depth: inset 0 1px 1px #ffffffe6, inset 0 -1px 1px #fff6, inset 3px 4px 12px -6px #ffffffd9,
+    inset -4px -6px 14px -8px #ffffff8c, inset 0 -14px 26px -18px #14286e33;
+  --shadow: 0 1px 2px #101e5a14, 0 22px 44px -22px #101e5a73;
+  --shadow-lift: 0 2px 4px #141c4614, 0 26px 50px -20px #141c466b;
+  --fill: #76768c21;
+  --fill-2: #76768c38;
+  --fill-hover: #76768c1a;
+  --well: #76768c24;
+  --sep: #2828461f;
+  --scrim: #14183229;
+  --lens: linear-gradient(180deg, #fffffff2, #ffffff8c);
+  --lens-glow: inset 0 1px 1px #fff, inset 0 -2px 5px #fff9, inset 0 0 0 0.5px #ffffffe6,
+    0 8px 18px -8px #10286e66, 0 1px 2px #10286e24;
+  --av-ring: #ffffffe6;
+  --gel-hi: #ffffffb8;
+  --island: #0b0b10;
+
+  --blue: #2f7cf6;
+  --purple: #8b5cf6;
+  --pink: #e9468f;
+  --orange: #f2711c;
+  --green: #22a559;
+  --teal: #0ea5a4;
+  --indigo: #5b5bd6;
+  --yellow: #e3a008;
+  --danger: #d92d3a;
+  --ring-tasks: #f0145a;
+  --ring-focus: #2fbf4f;
+  --ring-meet: #0aa6d8;
+  --timer: #e07b00;
+  --prio-urgent: #d92d3a;
+  --prio-high: #d9620f;
+  --prio-medium: #2f6fd8;
+  --prio-low: var(--text-3);
+  --delta-up: #16884a;
+  --delta-down: #d92d3a;
+}
+
+/* Glass density: clear lets more wallpaper through */
+[data-theme='dark'][data-glass='clear'] { --glass-a: 0.24; --chrome-a: 0.2; }
+[data-theme='light'][data-glass='clear'] { --glass-a: 0.16; --chrome-a: 0.14; }
+
+/* Reduce transparency */
+:root.is-solid {
+  --glass: var(--glass-solid);
+  --glass-chrome: var(--glass-solid);
+  --glass-thick: var(--glass-solid);
+}
+:root.is-solid .glass { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+
+/* Accents */
+[data-theme='dark'][data-accent='blue'] { --accent: #1f6fe6; --accent-ink: #7db4ff; }
+[data-theme='dark'][data-accent='purple'] { --accent: #7b3ff0; --accent-ink: #c0a2ff; }
+[data-theme='dark'][data-accent='pink'] { --accent: #cf2068; --accent-ink: #ff8fbb; }
+[data-theme='dark'][data-accent='orange'] { --accent: #c4500f; --accent-ink: #ffad72; }
+[data-theme='dark'][data-accent='green'] { --accent: #167f3d; --accent-ink: #72dc98; }
+[data-theme='dark'][data-accent='graphite'] { --accent: #4a4a54; --accent-ink: #f4f4f7; }
+[data-theme='light'][data-accent='blue'] { --accent: #1f6fe6; --accent-ink: #1757c0; }
+[data-theme='light'][data-accent='purple'] { --accent: #7b3ff0; --accent-ink: #5d27c9; }
+[data-theme='light'][data-accent='pink'] { --accent: #cf2068; --accent-ink: #a8124f; }
+[data-theme='light'][data-accent='orange'] { --accent: #d4580f; --accent-ink: #a8430a; }
+[data-theme='light'][data-accent='green'] { --accent: #167f3d; --accent-ink: #11672f; }
+[data-theme='light'][data-accent='graphite'] { --accent: #3a3a44; --accent-ink: #26262e; }
+/* A graphite switch would be hard to read as "on", so it goes green like iOS. */
+[data-accent='graphite'] { --switch-on: #30c158; }
+
+/* ---------------------------------------------------------------- wallpapers
+   --wbg1/2 base gradient, --wa1/2 and --wb1/2 flowing bands, --bands and
+   --bubbles set how much of the decoration shows. */
+
+[data-theme='dark'] {
+  --wbg1: #232428; --wbg2: #232428;
+  --wa1: #34363d; --wa2: #2a2b31; --wb1: #3a3c44; --wb2: #2c2d33;
+  --bands: 0; --bubbles: 0;
+}
+[data-theme='dark'][data-wall='sand'] { --wbg1: #3a2a1e; --wbg2: #3a2a1e; }
+[data-theme='dark'][data-wall='sage'] { --wbg1: #1f2c23; --wbg2: #1f2c23; }
+[data-theme='dark'][data-wall='smoke'] { --wbg1: #070708; --wbg2: #0f0f12; }
+[data-theme='dark'][data-wall='dusk'] { --wbg1: #0f1016; --wbg2: #17121c; }
+[data-theme='dark'][data-wall='aurora'] {
+  --wbg1: #090b1c; --wbg2: #0c0f24;
+  --wa1: #4253e0; --wa2: #1b2590; --wb1: #8a96ff; --wb2: #2b37b8;
+  --bands: 1; --bubbles: 1;
+}
+[data-theme='dark'][data-wall='tide'] {
+  --wbg1: #03112a; --wbg2: #0d0a2c;
+  --wa1: #0e7490; --wa2: #1e3a8a; --wb1: #22d3ee; --wb2: #3b5bf6;
+  --bands: 1; --bubbles: 1;
+}
+[data-theme='dark'][data-wall='bloom'] {
+  --wbg1: #130a2b; --wbg2: #2a0c22;
+  --wa1: #a3175a; --wa2: #5b1c8c; --wb1: #f472b6; --wb2: #a855f7;
+  --bands: 1; --bubbles: 1;
+}
+[data-theme='dark'][data-wall='ember'] {
+  --wbg1: #200a04; --wbg2: #2a0a12;
+  --wa1: #c2410c; --wa2: #7f1d1d; --wb1: #fb923c; --wb2: #e11d48;
+  --bands: 1; --bubbles: 1;
+}
+[data-theme='dark'][data-wall='grove'] {
+  --wbg1: #04170e; --wbg2: #041a1e;
+  --wa1: #047857; --wa2: #134e4a; --wb1: #34d399; --wb2: #0d9488;
+  --bands: 1; --bubbles: 1;
+}
+
+[data-theme='light'] {
+  --wbg1: #e4e9f4; --wbg2: #dfe5f2;
+  --wa1: #ffffff; --wa2: #eef2fb; --wb1: #ffffff; --wb2: #e8edf8;
+  --bands: 0.5; --bubbles: 0;
+}
+[data-theme='light'][data-wall='sand'] { --wbg1: #efe6da; --wbg2: #e9dece; }
+[data-theme='light'][data-wall='sage'] { --wbg1: #e1ebe3; --wbg2: #d7e4da; }
+[data-theme='light'][data-wall='smoke'] { --wbg1: #e8e8ec; --wbg2: #dcdce2; }
+[data-theme='light'][data-wall='dusk'] { --wbg1: #e8e4ee; --wbg2: #ddd6e8; }
+[data-theme='light'][data-wall='aurora'] {
+  --wbg1: #a9b4ff; --wbg2: #6f7fe8;
+  --wa1: #ffffff; --wa2: #dfe3ff; --wb1: #c9cfff; --wb2: #8c99f5;
+  --bands: 1; --bubbles: 1;
+}
+[data-theme='light'][data-wall='tide'] {
+  --wbg1: #a6e3f3; --wbg2: #7e9ef2;
+  --wa1: #ffffff; --wa2: #d8f3fb; --wb1: #bfeefa; --wb2: #86a6f6;
+  --bands: 1; --bubbles: 1;
+}
+[data-theme='light'][data-wall='bloom'] {
+  --wbg1: #f4b6d6; --wbg2: #b99af2;
+  --wa1: #ffffff; --wa2: #fbe0ef; --wb1: #f7c9e2; --wb2: #c7aaf6;
+  --bands: 1; --bubbles: 1;
+}
+[data-theme='light'][data-wall='ember'] {
+  --wbg1: #ffc9a8; --wbg2: #f6919f;
+  --wa1: #ffffff; --wa2: #ffe4d4; --wb1: #ffd2b5; --wb2: #f7a6b2;
+  --bands: 1; --bubbles: 1;
+}
+[data-theme='light'][data-wall='grove'] {
+  --wbg1: #b4ecd4; --wbg2: #8ed8cd;
+  --wa1: #ffffff; --wa2: #dcf6ec; --wb1: #c4f2df; --wb2: #92dcd2;
+  --bands: 1; --bubbles: 1;
+}
+
+/* ------------------------------------------------------------------- base */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'tnum' 0;
+}
+.tabular { font-variant-numeric: tabular-nums; }
+.display { font-family: var(--font-display); letter-spacing: -0.02em; }
+
+/* Theme switch: re-tint everything smoothly for a moment */
+html.theme-switching,
+html.theme-switching * {
+  transition: background-color 0.45s var(--ease-glass), color 0.45s var(--ease-glass),
+    box-shadow 0.45s var(--ease-glass), border-color 0.45s var(--ease-glass), fill 0.45s, stroke 0.45s !important;
+}
+.wall stop { transition: stop-color 0.6s var(--ease-glass); }
+.wall [data-band], .wall [data-bubble] { transition: opacity 0.6s var(--ease-glass); }
+
+:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+
+/* -------------------------------------------------------------------- glass
+   Component classes live in a layer so Tailwind utilities (fixed, rounded-*,
+   bg-*) placed on the same element win. */
+
+@layer components {
+.glass {
+  position: relative;
+  isolation: isolate;
+  background: var(--glass);
+  box-shadow: var(--depth), var(--shadow);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--sat)) brightness(var(--bright));
+  backdrop-filter: blur(var(--blur)) saturate(var(--sat)) brightness(var(--bright));
+}
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+  background: linear-gradient(135deg, var(--sheen), transparent 38%);
+}
+.glass--chrome { background: var(--glass-chrome); }
+.glass--thick {
+  background: var(--glass-thick);
+  box-shadow: var(--depth), var(--shadow-lift);
+  -webkit-backdrop-filter: blur(var(--blur-thick)) saturate(var(--sat));
+  backdrop-filter: blur(var(--blur-thick)) saturate(var(--sat));
+}
+
+/* Opaque-ish tile that sits on a glass panel: task cards, list rows */
+.tile {
+  background: color-mix(in srgb, var(--glass-solid) 74%, transparent);
+  box-shadow: inset 0 1px 0 #ffffff12, inset 0 0 0 0.5px #ffffff0d, 0 1px 2px #0000002e;
+}
+[data-theme='light'] .tile {
+  background: color-mix(in srgb, #fff 78%, transparent);
+  box-shadow: inset 0 1px 0 #fff, 0 1px 3px #10286e1a;
+}
+
+/* The selected-state "lens": nav pill, segmented thumb */
+.lens { background: var(--lens); box-shadow: var(--lens-glow); }
+
+/* Gel buttons: primary actions */
+.gel {
+  color: #fff;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 72%, #fff 28%), var(--accent) 62%);
+  box-shadow: inset 0 1px 1px var(--gel-hi), inset 0 -3px 8px -2px #00000040,
+    0 10px 24px -10px color-mix(in srgb, var(--accent) 85%, transparent);
+}
+.gel:hover { filter: brightness(1.08); }
+
+/* Hue tokens for projects and events */
+.hue-blue { --hue: var(--blue); }
+.hue-purple { --hue: var(--purple); }
+.hue-pink { --hue: var(--pink); }
+.hue-orange { --hue: var(--orange); }
+.hue-green { --hue: var(--green); }
+.hue-teal { --hue: var(--teal); }
+.hue-indigo { --hue: var(--indigo); }
+.hue-yellow { --hue: var(--yellow); }
+
+.ripple {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(circle, #ffffff66 0%, #ffffff00 70%);
+}
+}
+
+/* ------------------------------------------------------ overlay keyframes */
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.94) translateY(-4px); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes pop-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: scale(0.96) translateY(-2px); }
+}
+/* Tailwind's centring uses the `translate` property, so these only touch `transform`. */
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.95); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes modal-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(8px) scale(0.97); }
+}
+@keyframes drawer-in {
+  from { opacity: 0.4; transform: translateX(105%); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes drawer-out {
+  from { transform: none; }
+  to { transform: translateX(105%); }
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+.anim-pop[data-state='open'] { animation: pop-in 0.26s var(--ease-spring); transform-origin: var(--radix-popper-transform-origin, top); }
+.anim-pop[data-state='closed'] { animation: pop-out 0.16s var(--ease-glass); }
+.anim-modal[data-state='open'] { animation: modal-in 0.34s var(--ease-spring); }
+.anim-modal[data-state='closed'] { animation: modal-out 0.18s var(--ease-glass); }
+.anim-drawer[data-state='open'] { animation: drawer-in 0.42s var(--ease-glass); }
+.anim-drawer[data-state='closed'] { animation: drawer-out 0.24s var(--ease-glass); }
+.anim-fade[data-state='open'] { animation: fade-in 0.25s var(--ease-glass); }
+.anim-fade[data-state='closed'] { animation: fade-out 0.2s var(--ease-glass); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Native date / time inputs in glass forms */
+input[type='date']::-webkit-calendar-picker-indicator,
+input[type='time']::-webkit-calendar-picker-indicator { opacity: 0.6; cursor: pointer; }
+
+/* While a task card is being dragged */
+html.tk-dragging,
+html.tk-dragging * { cursor: grabbing !important; user-select: none !important; }
+
+@keyframes flash {
+  0% { box-shadow: 0 0 0 0 var(--accent-ink); }
+  100% { box-shadow: 0 0 0 10px transparent; }
+}
+.flash { animation: flash 0.7s var(--ease-glass); }
+
+/* Thin scrollbars inside cards */
+.scroll-thin { scrollbar-width: thin; scrollbar-color: var(--fill-2) transparent; }
