@@ -1,4 +1,4 @@
-import { ArrowLeft, CalendarPlus, Check, ChevronDown, Plus } from 'lucide-react'
+import { ArrowLeft, Bot, CalendarPlus, Check, ChevronDown, Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { BurnUp } from '@/components/charts/BurnUp'
@@ -19,6 +19,8 @@ import { cn } from '@/lib/utils'
 import { useActorsById } from '@/store/people'
 import { useUi } from '@/store/ui'
 import { useWorkspace } from '@/store/workspace'
+import { AgentSetupCard, GateBanner } from './AgentPanel'
+import { ConnectAgent } from './ConnectAgent'
 import { ProjectTimeline } from './ProjectTimeline'
 
 function OverviewCard({ project: p, now }: { project: Project; now: Date }) {
@@ -185,7 +187,9 @@ function ActivityCard({ project: p, now }: { project: Project; now: Date }) {
   )
 }
 
-const GROUPS: Status[] = ['todo', 'doing', 'review', 'done']
+const GROUPS: Status[] = ['awaiting_approval', 'todo', 'doing', 'review', 'blocked', 'failed', 'done']
+/** Shown only when they have tasks. */
+const RARE = new Set<Status>(['awaiting_approval', 'blocked', 'failed'])
 
 function TaskRow({ task, now }: { task: Task; now: Date }) {
   const toggleDone = useWorkspace((s) => s.toggleDone)
@@ -224,7 +228,7 @@ function ProjectTasksCard({ project: p, now }: { project: Project; now: Date }) 
       {GROUPS.map((status) => {
         const list = mine.filter((t) => t.status === status).sort((a, b) => a.due.localeCompare(b.due))
         const isDone = status === 'done'
-        if (!list.length && isDone) return null
+        if (!list.length && (isDone || RARE.has(status))) return null
         return (
           <section key={status} className="border-t border-sep py-2 first:border-t-0 first:pt-0">
             <h3 className="flex items-center gap-2 px-1 py-1.5 text-[14px] font-semibold">
@@ -261,6 +265,7 @@ export function ProjectDetailPage() {
   const tasks = useWorkspace((s) => s.tasks)
   const newEvent = useUi((s) => s.newEvent)
   const now = useNow(60_000)
+  const [connecting, setConnecting] = useState(false)
 
   const health = useMemo(() => project && projectHealth(project, tasks, now), [project, tasks, now])
   const points = useMemo(() => (project ? burnup(project, tasks, now) : []), [project, tasks, now])
@@ -298,6 +303,9 @@ export function ProjectDetailPage() {
             actions={
               <>
                 <PinButton project={project} withLabel />
+                <Button variant="glass" onClick={() => setConnecting(true)}>
+                  <Bot /> Connect an agent
+                </Button>
                 <Button variant="glass" onClick={() => newEvent({ projectId: project.id })}>
                   <CalendarPlus /> New event
                 </Button>
@@ -306,6 +314,8 @@ export function ProjectDetailPage() {
           />
         </div>
       </div>
+
+      <GateBanner project={project} />
 
       <StatRow
         stats={[
@@ -318,6 +328,7 @@ export function ProjectDetailPage() {
 
       <div className="grid items-start gap-[var(--gap)] xl:grid-cols-12">
         <div className="flex flex-col gap-[var(--gap)] xl:col-span-5">
+          <AgentSetupCard key={project.id} project={project} onConnect={() => setConnecting(true)} />
           <OverviewCard project={project} now={now} />
           <MilestonesCard project={project} now={now} />
           <ComingUpCard project={project} now={now} />
@@ -338,6 +349,7 @@ export function ProjectDetailPage() {
           <ProjectTasksCard project={project} now={now} />
         </div>
       </div>
+      <ConnectAgent project={project} open={connecting} onOpenChange={setConnecting} />
     </Page>
   )
 }

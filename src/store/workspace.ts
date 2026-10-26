@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { CalEvent, FocusEntry, Invite, Notice, Person, Project, Status, Task } from '@/data/types'
+import type { CalEvent, FocusEntry, GateStatus, Invite, Notice, Person, Project, Status, Task } from '@/data/types'
 import type { Snapshot } from '@/lib/api/snapshot'
 import { ME, USER_ID, WORKSPACE_ID } from '@/lib/session'
 import { byPosition } from '@/lib/tasks'
@@ -11,6 +11,7 @@ export type NewEvent = Omit<CalEvent, 'id'>
 export type NewProject = Pick<Project, 'name' | 'summary' | 'lead' | 'hue' | 'due' | 'icon'>
 export type NewInvite = Omit<Invite, 'id' | 'at'>
 export type ProfilePatch = Partial<Pick<Person, 'name' | 'email' | 'role'>>
+export type ProjectPatch = Partial<Pick<Project, 'goal' | 'repoUrl' | 'gates' | 'budgetUsd' | 'budgetTokens'>>
 
 interface WorkspaceState extends Snapshot {
   ready: boolean
@@ -30,6 +31,8 @@ interface WorkspaceState extends Snapshot {
   addEvent: (e: NewEvent) => CalEvent
   removeEvent: (id: string) => void
   addProject: (p: NewProject) => Project
+  /** Agent settings: goal, repo, which gates are on, budgets. */
+  updateProject: (id: string, patch: ProjectPatch) => void
   togglePin: (projectId: string) => void
   toggleMilestone: (projectId: string, milestoneId: string) => void
   logFocus: (entry: Omit<FocusEntry, 'id'>) => void
@@ -39,6 +42,8 @@ interface WorkspaceState extends Snapshot {
   addInvite: (i: NewInvite) => void
   cancelInvite: (id: string) => void
   updateMe: (patch: ProfilePatch) => void
+  /** Approve, reject or ask for changes; the server moves the waiting tasks and runs on. */
+  decideGate: (id: string, status: Exclude<GateStatus, 'pending'>, note?: string) => void
 }
 
 const EMPTY: Snapshot = {
@@ -247,6 +252,17 @@ export const useWorkspace = create<WorkspaceState>()((set, get) => {
       return project
     },
 
+    updateProject: (id, patch) => {
+      set((s) => ({ projects: s.projects.map((p) => (p.id === id ? { ...p, ...patch } : p)) }))
+      const row: Record<string, unknown> = {}
+      if ('goal' in patch) row.goal = patch.goal ?? ''
+      if ('repoUrl' in patch) row.repo_url = patch.repoUrl || null
+      if ('gates' in patch) row.gates = patch.gates
+      if ('budgetUsd' in patch) row.budget_usd = patch.budgetUsd ?? null
+      if ('budgetTokens' in patch) row.budget_tokens = patch.budgetTokens ?? null
+      save('Project', supabase.from('projects').update(row).eq('id', id))
+    },
+
     togglePin: (projectId) => {
       const p = get().projects.find((p) => p.id === projectId)
       if (!p) return
@@ -314,6 +330,13 @@ export const useWorkspace = create<WorkspaceState>()((set, get) => {
     updateMe: (patch) => {
       set((s) => ({ people: s.people.map((p) => (p.id === ME ? { ...p, ...patch } : p)) }))
       save('Profile', supabase.from('actors').update(patch).eq('id', ME))
+    },
+
+    decideGate: (id, status, note) => {
+      set((s) => ({
+        gates: s.gates.map((g) => (g.id === id ? { ...g, status, note, decidedBy: ME, decidedAt: now() } : g)),
+      }))
+      save('Decision', supabase.rpc('decide_gate', { p_gate: id, p_status: status, p_note: note ?? null }))
     },
   }
 })

@@ -1,8 +1,8 @@
 # Pane
 
 A liquid-glass workspace for teams and the coding agents working with them: Home, tasks, calendar,
-projects, insights, team and settings, backed by Postgres. Agents will report their plans, runs and
-artifacts into it (see the roadmap below).
+projects, insights, team and settings, backed by Postgres. Coding agents connect over MCP, hooks and
+OpenTelemetry to plan work, report progress and cost, and wait for people at approval gates.
 The original feature reference is in [docs/pane-reference-spec.md](docs/pane-reference-spec.md).
 
 ## Run it locally
@@ -13,6 +13,7 @@ Needs Node 22+ and Docker Desktop running.
 npm install
 npm run db:start   # local Supabase in Docker (first run downloads the images)
 npm run db:seed    # demo workspace + writes .env.local
+npm run functions:serve   # the agent API, in its own terminal
 npm run dev
 ```
 
@@ -22,6 +23,24 @@ land in Mailpit at http://127.0.0.1:54324, and Supabase Studio is at http://127.
 - `npm run db:reset` rebuilds the schema from `supabase/migrations` and re-seeds. The sample is dated
   relative to when it was seeded, so re-seed to get a fresh "today".
 - `npm run db:stop` stops the containers.
+- `npm run test:agent` runs the agent API contract tests (needs `functions:serve` running).
+
+## Connecting an agent
+
+Open a project and choose **Connect an agent**. Pane creates a token for that project, shows it once
+and gives you the set-up to paste:
+
+- **MCP tools** (Claude Code, Cursor, Codex): `get_project`, `get_task`, `propose_plan`, `create_task`,
+  `claim_task`, `update_task`, `start_run`, `end_run`, `log_step`, `attach_artifact`, `request_gate`,
+  `wait_for_gate`, `report_usage`. The agent plans and reports on purpose.
+- **Claude Code hooks**: every tool call, prompt and sub-agent is traced without the agent doing anything.
+- **Claude Code telemetry** (OTLP over HTTP/JSON): tokens and cost per run. Claude Code reads these
+  variables from the shell it starts in, not from `settings.json`, so the panel gives them as `export` lines.
+
+All three arrive at one Edge Function, `supabase/functions/agent`, and meet on the same run through
+Claude Code's session id. A token only reaches its own project. Agents can't decide gates: only a
+signed-in person can, through `decide_gate`. Write calls take an `idempotency_key`, each token is
+limited to 1,200 calls a minute, and new work stops once the project's budget is spent.
 
 ## Stack
 
@@ -37,7 +56,11 @@ land in Mailpit at http://127.0.0.1:54324, and Supabase Studio is at http://127.
 |---|---|
 | `src/index.css` | Design tokens, dark/light themes, accents, wallpapers, glass classes |
 | `src/lib/liquid.ts`, `src/components/glass/Glass.tsx` | Liquid-glass refraction: per-surface SVG displacement maps (Chromium), CSS blur elsewhere |
-| `supabase/migrations` | Database schema: people and agents as actors, projects, tasks with dependencies, runs, run events, artifacts, gates, row level security |
+| `supabase/migrations` | Database schema: people and agents as actors, projects, tasks with dependencies, runs, run events, artifacts, gates, row level security; agent tokens and gate decisions |
+| `supabase/functions/agent` | Agent API: MCP server (`tools.ts`, `mcp.ts`), Claude Code hooks (`hooks.ts`), OTLP intake (`otlp.ts`) |
+| `scripts/agent-api.test.ts` | Contract tests for the agent API against the local stack |
+| `src/pages/projects/AgentPanel.tsx`, `ConnectAgent.tsx` | Approval banner, agent settings (goal, repo, gates, budget), Connect an agent |
+| `src/lib/api/agents.ts` | Agent tokens and the set-up snippets |
 | `scripts/seed.ts`, `scripts/demo/` | Seeds the demo workspace, including the agent-built "Ledger API" project |
 | `src/app/Boot.tsx`, `src/app/SignIn.tsx` | Sign-in, loading your workspace, keeping it live with Realtime |
 | `src/lib/api/snapshot.ts` | Reads the workspace and maps database rows to app types |
@@ -69,7 +92,7 @@ The plan for agentic development: agents (Claude Code, Codex, Cursor…) plan an
 while Pane tracks it, with human approval gates.
 
 1. **Agent-ready backend** (done): schema, sign-in, data from Postgres, demo agent project.
-2. **Agent connection**: Pane MCP server, per-project agent tokens, Claude Code hooks and OpenTelemetry ingest.
+2. **Agent connection** (done): Pane MCP server, per-project agent tokens, Claude Code hooks and OpenTelemetry ingest.
 3. **Observability views**: run tree and trace timeline, agent-aware board, plan view and approval gates, agent metrics.
 4. **Hardening**: tests, CI, error monitoring, staging, budgets and alerts.
 5. **Software factory**: Pane dispatches work to agents it starts itself.
