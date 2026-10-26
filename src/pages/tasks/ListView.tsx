@@ -10,7 +10,8 @@ import { TaskCheck } from '@/components/ui/task-check'
 import { TaskMenu } from '@/components/ui/task-menu'
 import { STATUS_LABEL, type Status, type Task } from '@/data/types'
 import { gsap, prefersReducedMotion } from '@/lib/gsap'
-import { columnTasks, sortTasks, STATUSES, STATUS_TONE } from '@/lib/tasks'
+import { AgentWorking, TaskFlag } from '@/components/ui/task-agent'
+import { columnTasks, COLUMN_OF, sortTasks, STATUSES, STATUS_TONE } from '@/lib/tasks'
 import { dayKey, fmtDue } from '@/lib/time'
 import { cn } from '@/lib/utils'
 import { useTasksView, type TasksSort } from '@/store/tasksView'
@@ -31,16 +32,20 @@ function Row({ task, now }: { task: Task; now: Date }) {
       className="group grid cursor-pointer grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-[16px] px-2.5 py-2 transition-colors hover:bg-fill-hover md:grid-cols-[auto_minmax(0,1fr)_170px_96px_84px_auto_auto]"
     >
       <TaskCheck checked={done} onToggle={() => toggleDone(task.id)} label={`Mark “${task.title}” ${done ? 'not done' : 'done'}`} />
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation()
-          navigate(`/tasks/${task.id}`)
-        }}
-        className={cn('truncate text-left text-[15px] font-medium outline-none focus-visible:underline', done && 'text-ink-2 line-through')}
-      >
-        {task.title}
-      </button>
+      <span className="flex min-w-0 items-center gap-2">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            navigate(`/tasks/${task.id}`)
+          }}
+          className={cn('truncate text-left text-[15px] font-medium outline-none focus-visible:underline', done && 'text-ink-2 line-through')}
+        >
+          {task.title}
+        </button>
+        {!done && <TaskFlag task={task} className="hidden shrink-0 sm:inline-flex" />}
+        {!done && <AgentWorking task={task} className="shrink-0" />}
+      </span>
       <span className="hidden min-w-0 md:block">
         <ProjectChip id={task.projectId} />
       </span>
@@ -140,7 +145,7 @@ export function ListView({ tasks, now }: { tasks: Task[]; now: Date }) {
       }
     >
       {STATUSES.map((s) => (
-        <Group key={s} status={s} tasks={tasks.filter((t) => t.status === s)} now={now} sort={sort} />
+        <Group key={s} status={s} tasks={tasks.filter((t) => COLUMN_OF[t.status] === s)} now={now} sort={sort} />
       ))}
     </Card>
   )

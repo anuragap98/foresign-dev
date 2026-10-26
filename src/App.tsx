@@ -20,6 +20,7 @@ const router = createHashRouter([
         path: 'projects/:projectId',
         lazy: () => import('@/pages/projects/ProjectDetailPage').then((m) => ({ Component: m.ProjectDetailPage })),
       },
+      { path: 'runs/:runId?', lazy: () => import('@/pages/runs/RunsPage').then((m) => ({ Component: m.RunsPage })) },
       { path: 'insights', lazy: () => import('@/pages/insights/InsightsPage').then((m) => ({ Component: m.InsightsPage })) },
       { path: 'team/:personId?', lazy: () => import('@/pages/team/TeamPage').then((m) => ({ Component: m.TeamPage })) },
       { path: 'settings', lazy: () => import('@/pages/settings/SettingsPage').then((m) => ({ Component: m.SettingsPage })) },

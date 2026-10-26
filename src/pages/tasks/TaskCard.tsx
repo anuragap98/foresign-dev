@@ -2,6 +2,7 @@ import { CalendarDays, Check, MessageSquare } from 'lucide-react'
 import type { PointerEvent } from 'react'
 import { Avatar } from '@/components/ui/avatar'
 import { PriorityBadge, ProjectChip } from '@/components/ui/badges'
+import { AgentWorking, TaskAgentCounts, TaskFlag } from '@/components/ui/task-agent'
 import { TaskMenu } from '@/components/ui/task-menu'
 import type { Task } from '@/data/types'
 import { dayKey, fmtDue } from '@/lib/time'
@@ -56,6 +57,13 @@ export function TaskCard({ task, now, onOpen, onPointerDown, hidden }: TaskCardP
         </button>
       </h3>
 
+      {!done && (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5 empty:hidden">
+          <TaskFlag task={task} />
+          <AgentWorking task={task} />
+        </div>
+      )}
+
       {task.subtasks.length > 0 && !done && (
         <div className="mt-2.5 flex items-center gap-2">
           <span className="h-1 flex-1 overflow-hidden rounded-full bg-fill-2">
@@ -81,6 +89,7 @@ export function TaskCard({ task, now, onOpen, onPointerDown, hidden }: TaskCardP
             {task.comments.length}
           </span>
         )}
+        <TaskAgentCounts task={task} />
         <span className="ml-auto">
           <Avatar id={task.assignee} size={24} />
         </span>

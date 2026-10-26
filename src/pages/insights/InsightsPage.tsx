@@ -6,7 +6,6 @@ import { DayBars } from '@/components/charts/DayBars'
 import { Donut } from '@/components/charts/Donut'
 import { LineChart } from '@/components/charts/LineChart'
 import { ProgressRing } from '@/components/charts/Rings'
-import { Glass } from '@/components/glass/Glass'
 import { Avatar } from '@/components/ui/avatar'
 import { ProjectChip } from '@/components/ui/badges'
 import { Button } from '@/components/ui/button'
@@ -21,39 +20,14 @@ import { dayKey, fmtDate } from '@/lib/time'
 import { cn } from '@/lib/utils'
 import { usePeople } from '@/store/people'
 import { useWorkspace } from '@/store/workspace'
+import { AgentSection } from './AgentSection'
+import { Delta, Kpi } from './kpi'
 
 const RANGES: { value: string; label: string }[] = [
   { value: '7', label: '7D' },
   { value: '30', label: '30D' },
   { value: '90', label: '90D' },
 ]
-
-/** Green when the change is good news, red when it isn't. */
-function Delta({ value, unit, goodWhenUp = true, suffix }: { value: number; unit: string; goodWhenUp?: boolean; suffix?: string }) {
-  if (!value) return <span className="text-[12px] font-semibold text-ink-3">No change{suffix && ` ${suffix}`}</span>
-  const good = value > 0 === goodWhenUp
-  return (
-    <span className={cn('text-[12px] font-semibold', good ? 'text-[var(--delta-up)]' : 'text-[var(--delta-down)]')}>
-      {value > 0 ? '+' : '−'}
-      {Math.abs(value)}
-      {unit}
-      {suffix && <span className="font-normal text-ink-3"> {suffix}</span>}
-    </span>
-  )
-}
-
-function Kpi({ label, value, unit, format, delta }: { label: string; value: number; unit?: string; format?: (n: number) => string; delta: React.ReactNode }) {
-  return (
-    <Glass data-enter className="rounded-panel px-5 py-4">
-      <p className="text-[13px] font-medium text-ink-2">{label}</p>
-      <p className="display tabular mt-1 text-[30px] leading-none font-bold">
-        <CountUp value={value} format={format} />
-        {unit && <span className="ml-1 text-[16px] font-semibold text-ink-3">{unit}</span>}
-      </p>
-      <p className="mt-2">{delta}</p>
-    </Glass>
-  )
-}
 
 function ThroughputCard({ data, range, labels, fullLabels }: { data: Insights; range: RangeDays; labels: string[]; fullLabels: string[] }) {
   const [table, setTable] = useState(false)
@@ -364,6 +338,8 @@ export function InsightsPage() {
           <SlowestCard data={data} />
         </div>
       </div>
+
+      <AgentSection range={range} labels={labels} fullLabels={fullLabels} now={now} />
     </Page>
   )
 }

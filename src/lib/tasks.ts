@@ -6,6 +6,24 @@ import { addDays, dayKey, startOfWeek } from './time'
 
 export const STATUSES: Status[] = ['todo', 'doing', 'review', 'done']
 
+/**
+ * The board column a status sits in. Agents can also park a task as awaiting
+ * approval (not started yet), blocked or failed (stuck mid-work); those show in
+ * their column with a flag rather than in columns of their own.
+ */
+export const COLUMN_OF: Record<Status, Status> = {
+  todo: 'todo',
+  awaiting_approval: 'todo',
+  doing: 'doing',
+  blocked: 'doing',
+  failed: 'doing',
+  review: 'review',
+  done: 'done',
+}
+
+/** Statuses that need someone to look: shown as a flag on the card. */
+export const FLAGGED = new Set<Status>(['awaiting_approval', 'blocked', 'failed'])
+
 /** Column dot colours. */
 export const STATUS_TONE: Record<Status, string> = {
   todo: 'var(--text-3)',
@@ -43,7 +61,7 @@ export const byPosition = (a: Task, b: Task) => a.position - b.position || a.cre
 
 /** Done tasks read newest first; other columns keep their hand-sorted order. */
 export function columnTasks(tasks: Task[], status: Status) {
-  const col = tasks.filter((t) => t.status === status)
+  const col = tasks.filter((t) => COLUMN_OF[t.status] === status)
   return status === 'done'
     ? col.sort((a, b) => (b.doneAt ?? '').localeCompare(a.doneAt ?? ''))
     : col.sort(byPosition)

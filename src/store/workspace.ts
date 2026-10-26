@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import type { CalEvent, FocusEntry, GateStatus, Invite, Notice, Person, Project, Status, Task } from '@/data/types'
 import type { Snapshot } from '@/lib/api/snapshot'
 import { ME, USER_ID, WORKSPACE_ID } from '@/lib/session'
-import { byPosition } from '@/lib/tasks'
+import { byPosition, COLUMN_OF } from '@/lib/tasks'
 import { supabase } from '@/lib/supabase'
 import { dayKey } from '@/lib/time'
 
@@ -160,8 +160,10 @@ export const useWorkspace = create<WorkspaceState>()((set, get) => {
     moveTask: (id, status, beforeId) => {
       const task = get().tasks.find((t) => t.id === id)
       if (!task) return
+      // Reordering inside its own column keeps a flag such as blocked; moving columns clears it.
+      if (COLUMN_OF[task.status] === status) status = task.status
       // New position halfway between its new neighbours, so only this row changes.
-      const column = get().tasks.filter((t) => t.status === status && t.id !== id).sort(byPosition)
+      const column = get().tasks.filter((t) => COLUMN_OF[t.status] === COLUMN_OF[status] && t.id !== id).sort(byPosition)
       const at = beforeId ? column.findIndex((t) => t.id === beforeId) : -1
       const prev = at < 0 ? column.at(-1) : column[at - 1]
       const next = at < 0 ? undefined : column[at]

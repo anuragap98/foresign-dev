@@ -10,6 +10,7 @@ export type EventKind = 'meeting' | 'focus' | 'review' | 'deadline' | 'team'
 export type ActorKind = 'person' | 'agent'
 export type TaskSource = 'human' | 'agent'
 export type RunStatus = 'running' | 'waiting' | 'succeeded' | 'failed' | 'cancelled'
+export type RunEventType = 'tool_call' | 'command' | 'file_edit' | 'message' | 'error' | 'note'
 export type ArtifactKind = 'branch' | 'commit' | 'pull_request' | 'test_report' | 'deploy' | 'doc'
 export type GateKind = 'plan' | 'merge' | 'deploy' | 'custom'
 export type GateStatus = 'pending' | 'approved' | 'rejected' | 'changes_requested'
@@ -164,6 +165,18 @@ export interface Run {
   costUsd: number
   model?: string
   summary: string
+}
+
+/** One step in a run's trace. Loaded per run, not with the workspace. */
+export interface RunEvent {
+  id: number
+  runId: string
+  ts: string
+  type: RunEventType
+  name: string
+  durationMs?: number
+  tokens?: number
+  detail?: string
 }
 
 export interface Artifact {

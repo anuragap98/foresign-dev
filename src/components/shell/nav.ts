@@ -1,4 +1,4 @@
-import { CalendarDays, ChartNoAxesColumn, Folder, House, Settings, SquareCheck, Users, type LucideIcon } from 'lucide-react'
+import { Activity, CalendarDays, ChartNoAxesColumn, Folder, House, Settings, SquareCheck, Users, type LucideIcon } from 'lucide-react'
 
 export interface NavItem {
   to: string
@@ -13,6 +13,7 @@ export const NAV: NavItem[] = [
   { to: '/tasks', label: 'Tasks', icon: SquareCheck, key: 't' },
   { to: '/calendar', label: 'Calendar', icon: CalendarDays, key: 'c' },
   { to: '/projects', label: 'Projects', icon: Folder, key: 'p' },
+  { to: '/runs', label: 'Runs', icon: Activity, key: 'r' },
   { to: '/insights', label: 'Insights', icon: ChartNoAxesColumn, key: 'i' },
   { to: '/team', label: 'Team', icon: Users, key: 'm' },
   { to: '/settings', label: 'Settings', icon: Settings, key: 's' },

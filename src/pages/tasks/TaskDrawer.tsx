@@ -10,12 +10,13 @@ import { Segmented } from '@/components/ui/segmented'
 import { TaskCheck } from '@/components/ui/task-check'
 import { PRIORITY_LABEL, STATUS_LABEL, type Priority, type Status, type Task } from '@/data/types'
 import { useNow } from '@/lib/derive'
-import { STATUSES } from '@/lib/tasks'
+import { COLUMN_OF, STATUSES } from '@/lib/tasks'
 import { relTime } from '@/lib/time'
 import { cn } from '@/lib/utils'
 import { useFocus } from '@/store/focus'
 import { useActorsById, useActors } from '@/store/people'
 import { useWorkspace } from '@/store/workspace'
+import { PlannedBy, TaskAgentWork, TaskDependencies, TaskDetails, TaskFlagBanner } from './TaskAgentSections'
 
 const bare = 'h-8 bg-transparent px-0 text-[15px] font-semibold hover:bg-transparent focus:bg-transparent focus:shadow-none'
 
@@ -68,14 +69,16 @@ function TaskBody({ task }: { task: Task }) {
 
   return (
     <>
+      <TaskFlagBanner task={task} />
       <Segmented
         label="Status"
         size="md"
-        value={task.status}
+        value={COLUMN_OF[task.status]}
         onChange={(v: Status) => s.setStatus(task.id, v)}
         options={STATUSES.map((st) => ({ value: st, label: STATUS_LABEL[st] }))}
         className="w-full justify-between"
       />
+      <PlannedBy task={task} />
 
       <div className="mt-4 grid grid-cols-2 gap-2.5">
         <Tile label="Assignee">
@@ -144,6 +147,10 @@ function TaskBody({ task }: { task: Task }) {
           />
         </Tile>
       </div>
+
+      <TaskDetails key={task.id} task={task} />
+      <TaskDependencies task={task} />
+      <TaskAgentWork task={task} />
 
       <SectionTitle title="Subtasks" count={task.subtasks.length ? `${subsDone}/${task.subtasks.length}` : undefined} />
       {task.subtasks.length > 0 && (

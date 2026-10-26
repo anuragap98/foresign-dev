@@ -16,7 +16,7 @@ import { useHotkeys } from './useHotkeys'
 import { useReminders } from './useReminders'
 import { Wallpaper } from './Wallpaper'
 
-const DRAWER_SECTIONS = new Set(['tasks', 'calendar', 'team'])
+const DRAWER_SECTIONS = new Set(['tasks', 'calendar', 'team', 'runs'])
 
 
 export function AppShell() {

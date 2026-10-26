@@ -61,6 +61,10 @@ limited to 1,200 calls a minute, and new work stops once the project's budget is
 | `scripts/agent-api.test.ts` | Contract tests for the agent API against the local stack |
 | `src/pages/projects/AgentPanel.tsx`, `ConnectAgent.tsx` | Approval banner, agent settings (goal, repo, gates, budget), Connect an agent |
 | `src/lib/api/agents.ts` | Agent tokens and the set-up snippets |
+| `src/pages/runs`, `src/lib/runs.ts` | Runs: run tree (orchestrators and sub-agents), run detail, trace as a timeline or a log |
+| `src/lib/api/runs.ts` | A run's steps, loaded on demand and followed live while the run is going |
+| `src/components/ui/task-agent.tsx`, `src/pages/tasks/TaskAgentSections.tsx` | Agent-aware tasks: blocked/failed/awaiting-approval flags, "Working", attempts, PRs, dependencies, agent work in the drawer |
+| `src/pages/insights/AgentSection.tsx` | Agent metrics: finished tasks, run success, spend and cost per task, approvals, per-agent table |
 | `scripts/seed.ts`, `scripts/demo/` | Seeds the demo workspace, including the agent-built "Ledger API" project |
 | `src/app/Boot.tsx`, `src/app/SignIn.tsx` | Sign-in, loading your workspace, keeping it live with Realtime |
 | `src/lib/api/snapshot.ts` | Reads the workspace and maps database rows to app types |
@@ -93,6 +97,7 @@ while Pane tracks it, with human approval gates.
 
 1. **Agent-ready backend** (done): schema, sign-in, data from Postgres, demo agent project.
 2. **Agent connection** (done): Pane MCP server, per-project agent tokens, Claude Code hooks and OpenTelemetry ingest.
-3. **Observability views**: run tree and trace timeline, agent-aware board, plan view and approval gates, agent metrics.
+3. **Observability views** (in progress): done: run tree and trace timeline, agent-aware board and drawer, approval banner,
+   agent metrics. Still to do: plan view (task graph), Team & agents roster, a Needs-your-attention card on Home.
 4. **Hardening**: tests, CI, error monitoring, staging, budgets and alerts.
 5. **Software factory**: Pane dispatches work to agents it starts itself.

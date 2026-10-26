@@ -7,6 +7,8 @@ interface DayBarsProps {
   values: number[]
   color?: string
   unit?: string
+  /** Overrides `unit` for axis and tooltip values, e.g. currency. */
+  format?: (v: number) => string
   height?: number
   tooltipLabel?: (i: number) => string
 }
@@ -14,7 +16,7 @@ interface DayBarsProps {
 const PAD = { l: 34, r: 6, t: 10, b: 26 }
 
 /** One rounded bar per day; grows from the floor with a stagger. */
-export function DayBars({ labels, values, color = 'var(--accent-ink)', unit = '', height = 200, tooltipLabel = (i) => labels[i] }: DayBarsProps) {
+export function DayBars({ labels, values, color = 'var(--accent-ink)', unit = '', format = (v) => `${v}${unit}`, height = 200, tooltipLabel = (i) => labels[i] }: DayBarsProps) {
   const [wrap, w] = useWidth<HTMLDivElement>()
   const svg = useRef<SVGSVGElement>(null)
   const [hover, setHover] = useState<number | null>(null)
@@ -57,8 +59,7 @@ export function DayBars({ labels, values, color = 'var(--accent-ink)', unit = ''
             <g key={v}>
               <line x1={PAD.l} x2={w - PAD.r} y1={y(v)} y2={y(v)} stroke="var(--sep)" />
               <text x={PAD.l - 8} y={y(v)} dy="0.32em" textAnchor="end" className="fill-[var(--text-3)] text-[11px]">
-                {v}
-                {unit}
+                {format(v)}
               </text>
             </g>
           ))}
@@ -93,8 +94,7 @@ export function DayBars({ labels, values, color = 'var(--accent-ink)', unit = ''
         >
           <p className="font-semibold">{tooltipLabel(hover)}</p>
           <p className="tabular text-ink-2">
-            {values[hover]}
-            {unit}
+            {format(values[hover])}
           </p>
         </div>
       )}
