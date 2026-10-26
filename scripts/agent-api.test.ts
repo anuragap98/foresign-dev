@@ -308,6 +308,24 @@ describe('runs and telemetry', () => {
     assert.ok(main.ended_at)
   })
 
+  test('quiet runs go stale, except ones waiting on a person, and come back when the agent does', async () => {
+    const s3 = `test-${randomUUID()}`
+    const hoursAgo = new Date(Date.now() - 2 * 3600_000).toISOString()
+    const base = { workspace_id: workspaceId, project_id: projects.a.id, agent_id: (await call('get_project')).you.agent_id, started_at: hoursAgo }
+    const { data: quiet } = await admin.from('runs').insert({ ...base, external_session_id: s3 }).select().single()
+    const { data: gated } = await admin.from('runs').insert({ ...base, status: 'waiting' }).select().single()
+    await admin.from('gates').insert({ workspace_id: workspaceId, project_id: projects.a.id, kind: 'custom', title: 'Hold on', requested_by_run: gated!.id })
+
+    assert.ifError((await admin.rpc('expire_stale_runs')).error)
+    assert.equal((await row('runs', quiet!.id)).status, 'stale')
+    assert.equal((await row('runs', gated!.id)).status, 'waiting')
+
+    await post('/hooks', { session_id: s3, hook_event_name: 'PreToolUse', tool_name: 'Read', tool_use_id: 'tu9', tool_input: {} }, tokens.a)
+    const back = await row('runs', quiet!.id)
+    assert.equal(back.status, 'running')
+    assert.equal(back.ended_at, null)
+  })
+
   test('OTLP protobuf is refused with a hint', async () => {
     const res = await fetch(`${API}/otlp/v1/logs`, { method: 'POST', headers: { authorization: `Bearer ${tokens.a}`, 'content-type': 'application/x-protobuf' }, body: '' })
     assert.equal(res.status, 415)

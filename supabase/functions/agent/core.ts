@@ -101,7 +101,10 @@ export async function createRun(ctx: Ctx, fields: Row): Promise<Row> {
  * top-level run (often opened by the SessionStart hook), or a new one.
  */
 export async function currentRun(ctx: Ctx, runId?: string): Promise<Row> {
-  if (runId) return getRun(ctx, runId)
+  if (runId) {
+    const named = await getRun(ctx, runId)
+    return named.status === 'stale' ? revive(named) : named
+  }
   const since = new Date(Date.now() - 12 * 3600_000).toISOString()
   const live = must(
     await db
@@ -131,6 +134,7 @@ export async function existingSessionRun(ctx: Ctx, externalId: string): Promise<
 export async function sessionRun(ctx: Ctx, externalId: string, fields: Row = {}): Promise<Row> {
   const find = () => findSession(ctx, externalId)
   const found = must(await find(), 'Finding the session’s run')
+  if (found?.status === 'stale') return revive(found)
   if (found) return found
   const { error } = await db.from('runs').upsert(
     { workspace_id: ctx.workspaceId, project_id: ctx.projectId, agent_id: ctx.agentId, token_id: ctx.tokenId, external_session_id: externalId, ...fields },
@@ -142,11 +146,21 @@ export async function sessionRun(ctx: Ctx, externalId: string, fields: Row = {})
   return run
 }
 
+/** A run marked stale (it went quiet) whose agent has spoken again is running again. */
+async function revive(run: Row): Promise<Row> {
+  const back = must(
+    await db.from('runs').update({ status: 'running', ended_at: null }).eq('id', run.id).eq('status', 'stale').select().maybeSingle(),
+    'Resuming the run',
+  )
+  await refreshAgentStatus(run.agent_id)
+  return back ?? run
+}
+
 /** A sub-agent's run inside a session, nested under the session's run. */
 export async function subagentRun(ctx: Ctx, parent: Row, sessionId: string, agentId: string, agentType?: string): Promise<Row> {
   const externalId = `${sessionId}/${agentId}`
   const seen = await existingSessionRun(ctx, externalId)
-  if (seen) return seen
+  if (seen) return seen.status === 'stale' ? revive(seen) : seen
 
   // The agent may have opened this sub-agent's run itself (start_run) just before launching it.
   // Adopt that run, keeping its name, rather than tracing one sub-agent twice. Oldest first,

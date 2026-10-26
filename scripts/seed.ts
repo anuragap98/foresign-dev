@@ -177,9 +177,15 @@ async function main() {
     tokens_in: r.tokensIn, tokens_out: r.tokensOut, cost_usd: r.costUsd, model: r.model, summary: r.summary,
     external_session_id: `demo-${r.key}`,
   })))
-  await insert('run_events', RUNS.flatMap((r) => r.events.map(([offset, type, name, durationMs, detail]) => ({
-    workspace_id, run_id: id(`run:${r.key}`), ts: ago(r.startedMinAgo - offset), type, name, duration_ms: durationMs, payload: { detail },
-  }))))
+  await insert('run_events', RUNS.flatMap((r) => [
+    ...r.events.map(([offset, type, name, durationMs, detail]) => ({
+      workspace_id, run_id: id(`run:${r.key}`), ts: ago(r.startedMinAgo - offset), type, name, duration_ms: durationMs, payload: { detail },
+    })),
+    // Live runs have just been heard from, so the stale-run sweep leaves them be for now.
+    ...(r.status === 'running'
+      ? [{ workspace_id, run_id: id(`run:${r.key}`), ts: ago(2), type: 'note', name: 'Still working', duration_ms: null, payload: {} }]
+      : []),
+  ]))
   await insert('artifacts', ARTIFACTS.map((a) => ({
     workspace_id, project_id: project(LEDGER.key), run_id: id(`run:${a.run}`), task_id: a.task ? task(a.task) : null,
     kind: a.kind, title: a.title, url: a.url ?? null, status: a.status ?? null,

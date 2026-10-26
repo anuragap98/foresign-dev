@@ -6,6 +6,7 @@ export const RUN_STATUS_LABEL: Record<RunStatus, string> = {
   succeeded: 'Succeeded',
   failed: 'Failed',
   cancelled: 'Cancelled',
+  stale: 'Went quiet',
 }
 
 export const RUN_STATUS_TONE: Record<RunStatus, string> = {
@@ -14,6 +15,7 @@ export const RUN_STATUS_TONE: Record<RunStatus, string> = {
   succeeded: 'var(--green)',
   failed: 'var(--danger)',
   cancelled: 'var(--text-3)',
+  stale: 'var(--orange)',
 }
 
 export const EVENT_LABEL: Record<RunEventType, string> = {

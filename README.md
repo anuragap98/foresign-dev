@@ -23,7 +23,18 @@ land in Mailpit at http://127.0.0.1:54324, and Supabase Studio is at http://127.
 - `npm run db:reset` rebuilds the schema from `supabase/migrations` and re-seeds. The sample is dated
   relative to when it was seeded, so re-seed to get a fresh "today".
 - `npm run db:stop` stops the containers.
-- `npm run test:agent` runs the agent API contract tests (needs `functions:serve` running).
+
+## Tests
+
+| Command | What | Needs |
+|---|---|---|
+| `npm test` | Unit tests (Vitest) for the logic behind the views: plan layout, run trees, agent summaries, attention list, board columns, agent metrics | nothing |
+| `npm run test:agent` | Contract tests for the agent API: auth, every MCP tool, gates, hooks, telemetry, stale runs, limits | `db:start`, `db:seed`, `functions:serve` |
+| `npm run test:e2e` | Browser tests (Playwright): plan approval end to end, asking for changes, blocked work, the Runs trace, board drag and drop, phone layout | the same, plus `npx playwright install chromium` once |
+
+The browser and contract tests make their own projects and remove them afterwards. CI
+(`.github/workflows/ci.yml`) runs lint, types, unit tests and the build on every push, then starts the
+local stack in Docker and runs the contract and browser tests.
 
 ## Connecting an agent
 
@@ -41,6 +52,11 @@ All three arrive at one Edge Function, `supabase/functions/agent`, and meet on t
 Claude Code's session id. A token only reaches its own project. Agents can't decide gates: only a
 signed-in person can, through `decide_gate`. Write calls take an `idempotency_key`, each token is
 limited to 1,200 calls a minute, and new work stops once the project's budget is spent.
+
+Runs that stop reporting (a crashed agent, a closed laptop) are marked **went quiet** after 30
+minutes without a trace step or a call with their token; runs waiting on an approval are left alone.
+A pg_cron job does this every five minutes (`expire_stale_runs`), and the run comes back to life if the
+agent reports again.
 
 ## Stack
 
@@ -102,5 +118,6 @@ while Pane tracks it, with human approval gates.
 2. **Agent connection** (done): Pane MCP server, per-project agent tokens, Claude Code hooks and OpenTelemetry ingest.
 3. **Observability views** (done): runs with run tree and trace timeline, agent-aware board and drawer, plan view,
    approval banner, Team & agents, Needs your attention, agent metrics.
-4. **Hardening**: tests, CI, error monitoring, staging, budgets and alerts.
+4. **Hardening** (in progress): done: stale-run cleanup, unit, contract and browser tests, CI.
+   Still to do: error monitoring, a staging environment, backups.
 5. **Software factory**: Pane dispatches work to agents it starts itself.

@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, types, unit tests, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - name: Type-check the app, scripts and browser tests
+        run: npx tsc -b && npx tsc -p tsconfig.scripts.json --noEmit
+      - run: npm test
+      - run: npm run build
+
+  stack:
+    name: Agent API and browser tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: checks
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Start the local Supabase stack
+        # Studio, image resizing and log shipping aren't needed for tests.
+        run: npx supabase start -x studio,imgproxy,vector,logflare,supavisor
+      - name: Seed the demo workspace
+        run: npm run db:seed
+      - name: Serve the agent API
+        run: |
+          npx supabase functions serve agent > functions.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf http://127.0.0.1:54321/functions/v1/agent/ > /dev/null && exit 0
+            sleep 2
+          done
+          cat functions.log
+          exit 1
+
+      - name: Agent API contract tests
+        run: npm run test:agent
+
+      - run: npx playwright install --with-deps chromium
+      - name: Browser tests
+        run: npm run test:e2e
+
+      - name: Upload the Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+            functions.log
+          retention-days: 7
