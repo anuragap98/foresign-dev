@@ -28,8 +28,8 @@ function Section({ title, count, children }: { title: string; count?: string; ch
 
 const FLAG_HINT: Record<string, string> = {
   awaiting_approval: 'An agent planned this. Work starts once a person approves the plan.',
-  blocked: 'Stuck until someone helps. Moving it to a column clears the flag.',
-  failed: 'The agent gave up. Reassign it, or move it to a column to try again.',
+  blocked: 'Stuck until someone helps. Choosing a column below clears the flag.',
+  failed: 'The agent gave up. Reassign it, or choose a column below to try again.',
 }
 
 /** Why a task is parked, with the agent's latest note when there is one. */

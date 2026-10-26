@@ -19,7 +19,14 @@ export function Segmented<T extends string>({ value, options, onChange, label, s
 
   useLayoutEffect(() => {
     const btn = root.current?.querySelector<HTMLElement>(`[data-value="${value}"]`)
-    if (!btn || !thumb.current) return
+    if (!thumb.current) return
+    // A value with no option (e.g. a task parked as blocked) selects nothing.
+    if (!btn) {
+      gsap.set(thumb.current, { autoAlpha: 0 })
+      placed.current = false
+      return
+    }
+    if (!placed.current) gsap.set(thumb.current, { autoAlpha: 1 })
     const to = { x: btn.offsetLeft, width: btn.offsetWidth }
     if (!placed.current) {
       gsap.set(thumb.current, to)

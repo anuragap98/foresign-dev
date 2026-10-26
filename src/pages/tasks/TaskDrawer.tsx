@@ -10,7 +10,7 @@ import { Segmented } from '@/components/ui/segmented'
 import { TaskCheck } from '@/components/ui/task-check'
 import { PRIORITY_LABEL, STATUS_LABEL, type Priority, type Status, type Task } from '@/data/types'
 import { useNow } from '@/lib/derive'
-import { COLUMN_OF, STATUSES } from '@/lib/tasks'
+import { STATUSES } from '@/lib/tasks'
 import { relTime } from '@/lib/time'
 import { cn } from '@/lib/utils'
 import { useFocus } from '@/store/focus'
@@ -73,7 +73,7 @@ function TaskBody({ task }: { task: Task }) {
       <Segmented
         label="Status"
         size="md"
-        value={COLUMN_OF[task.status]}
+        value={task.status}
         onChange={(v: Status) => s.setStatus(task.id, v)}
         options={STATUSES.map((st) => ({ value: st, label: STATUS_LABEL[st] }))}
         className="w-full justify-between"

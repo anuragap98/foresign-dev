@@ -64,6 +64,9 @@ limited to 1,200 calls a minute, and new work stops once the project's budget is
 | `src/pages/runs`, `src/lib/runs.ts` | Runs: run tree (orchestrators and sub-agents), run detail, trace as a timeline or a log |
 | `src/lib/api/runs.ts` | A run's steps, loaded on demand and followed live while the run is going |
 | `src/components/ui/task-agent.tsx`, `src/pages/tasks/TaskAgentSections.tsx` | Agent-aware tasks: blocked/failed/awaiting-approval flags, "Working", attempts, PRs, dependencies, agent work in the drawer |
+| `src/pages/projects/PlanGraph.tsx`, `src/lib/plan.ts` | Plan view: a project's tasks as a dependency graph |
+| `src/pages/team/AgentCard.tsx`, `AgentProfile.tsx`, `src/lib/agents.ts` | Team & agents: agent roster, what each is doing, its record and runs |
+| `src/pages/home/AttentionCard.tsx`, `src/lib/attention.ts` | Needs your attention: approvals, budgets, blocked and failed work across projects |
 | `src/pages/insights/AgentSection.tsx` | Agent metrics: finished tasks, run success, spend and cost per task, approvals, per-agent table |
 | `scripts/seed.ts`, `scripts/demo/` | Seeds the demo workspace, including the agent-built "Ledger API" project |
 | `src/app/Boot.tsx`, `src/app/SignIn.tsx` | Sign-in, loading your workspace, keeping it live with Realtime |
@@ -97,7 +100,7 @@ while Pane tracks it, with human approval gates.
 
 1. **Agent-ready backend** (done): schema, sign-in, data from Postgres, demo agent project.
 2. **Agent connection** (done): Pane MCP server, per-project agent tokens, Claude Code hooks and OpenTelemetry ingest.
-3. **Observability views** (in progress): done: run tree and trace timeline, agent-aware board and drawer, approval banner,
-   agent metrics. Still to do: plan view (task graph), Team & agents roster, a Needs-your-attention card on Home.
+3. **Observability views** (done): runs with run tree and trace timeline, agent-aware board and drawer, plan view,
+   approval banner, Team & agents, Needs your attention, agent metrics.
 4. **Hardening**: tests, CI, error monitoring, staging, budgets and alerts.
 5. **Software factory**: Pane dispatches work to agents it starts itself.

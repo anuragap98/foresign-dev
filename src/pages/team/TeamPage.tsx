@@ -7,10 +7,12 @@ import { Segmented } from '@/components/ui/segmented'
 import type { Team } from '@/data/types'
 import { useNow } from '@/lib/derive'
 import { Flip, gsap, prefersReducedMotion } from '@/lib/gsap'
+import { agentSummary } from '@/lib/agents'
 import { TEAMS, workload } from '@/lib/team'
-import { usePeople } from '@/store/people'
+import { useActors, usePeople } from '@/store/people'
 import { useUi } from '@/store/ui'
 import { useWorkspace } from '@/store/workspace'
+import { AgentCard } from './AgentCard'
 import { PendingInvites } from './PendingInvites'
 import { PersonCard } from './PersonCard'
 import { ProfileDrawer } from './ProfileDrawer'
@@ -18,10 +20,12 @@ import { ProfileDrawer } from './ProfileDrawer'
 export function TeamPage() {
   const { personId } = useParams()
   const tasks = useWorkspace((s) => s.tasks)
+  const runs = useWorkspace((s) => s.runs)
   const everyone = usePeople()
+  const actors = useActors()
   const openDialog = useUi((s) => s.openDialog)
   const now = useNow(30_000)
-  const [team, setTeam] = useState<Team | 'all'>('all')
+  const [team, setTeam] = useState<Team | 'all' | 'agents'>('all')
   const grid = useRef<HTMLDivElement>(null)
   const flip = useRef<Flip.FlipState | null>(null)
 
@@ -34,9 +38,19 @@ export function TeamPage() {
     }
   }, [tasks, everyone])
 
-  const people = everyone.filter((p) => team === 'all' || p.team === team)
+  const people = team === 'agents' ? [] : everyone.filter((p) => team === 'all' || p.team === team)
 
-  const changeTeam = (t: Team | 'all') => {
+  // Agents working come first, then those waiting on a person, then by what they've finished.
+  const agents = useMemo(() => {
+    const rank = { working: 0, waiting: 1, idle: 2 }
+    return actors
+      .filter((a) => a.kind === 'agent')
+      .map((a) => ({ agent: a, summary: agentSummary(a, runs, tasks) }))
+      .sort((x, y) => rank[x.summary.state] - rank[y.summary.state] || y.summary.finished - x.summary.finished)
+  }, [actors, runs, tasks])
+  const showAgents = (team === 'all' || team === 'agents') && agents.length > 0
+
+  const changeTeam = (t: Team | 'all' | 'agents') => {
     if (grid.current && !prefersReducedMotion()) flip.current = Flip.getState(grid.current.children)
     setTeam(t)
   }
@@ -57,7 +71,7 @@ export function TeamPage() {
     <Page>
       <PageHeader
         title="Team"
-        subtitle={`${everyone.length} people · ${TEAMS.length} teams`}
+        subtitle={`${everyone.length} people · ${agents.length} agent${agents.length === 1 ? '' : 's'} · ${TEAMS.length} teams`}
         actions={
           <>
             <Segmented
@@ -65,7 +79,11 @@ export function TeamPage() {
               size="md"
               value={team}
               onChange={changeTeam}
-              options={[{ value: 'all' as const, label: 'All' }, ...TEAMS.map((t) => ({ value: t, label: t }))]}
+              options={[
+                { value: 'all' as const, label: 'All' },
+                ...TEAMS.map((t) => ({ value: t, label: t })),
+                ...(agents.length ? [{ value: 'agents' as const, label: 'Agents' }] : []),
+              ]}
               className="max-w-full overflow-x-auto [scrollbar-width:none]"
             />
             <Button variant="gel" onClick={() => openDialog('invite')}>
@@ -80,14 +98,32 @@ export function TeamPage() {
           { label: 'Online now', value: stats.online, suffix: `/ ${everyone.length}` },
           { label: 'In focus', value: stats.focus },
           { label: 'Average load', value: stats.load, format: (n) => `${Math.round(n)}%` },
+          ...(agents.length
+            ? [{ label: 'Agents working', value: agents.filter((a) => a.summary.state !== 'idle').length, suffix: `/ ${agents.length}` }]
+            : []),
         ]}
       />
 
-      <div ref={grid} className="grid gap-[var(--gap)] md:grid-cols-2 xl:grid-cols-3">
+      <div ref={grid} className="grid gap-[var(--gap)] empty:hidden md:grid-cols-2 xl:grid-cols-3">
         {people.map((p) => (
           <PersonCard key={p.id} person={p} tasks={tasks} now={now} />
         ))}
       </div>
+
+      {showAgents && (
+        <section aria-label="Agents" className="flex flex-col gap-[var(--gap)]">
+          {team === 'all' && (
+            <h2 data-enter className="mt-2 text-[22px] font-bold">
+              Agents
+            </h2>
+          )}
+          <div className="grid gap-[var(--gap)] md:grid-cols-2 xl:grid-cols-3">
+            {agents.map(({ agent, summary }) => (
+              <AgentCard key={agent.id} agent={agent} summary={summary} now={now} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <PendingInvites />
       <ProfileDrawer personId={personId} />

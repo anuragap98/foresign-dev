@@ -81,7 +81,7 @@ before(async () => {
 
 after(async () => {
   await admin.from('projects').delete().in('id', [projects.a?.id, projects.b?.id].filter(Boolean))
-  await admin.from('actors').delete().eq('workspace_id', workspaceId).eq('kind', 'agent').eq('name', 'Contract helper')
+  await admin.from('actors').delete().eq('workspace_id', workspaceId).eq('kind', 'agent').in('name', ['Contract helper', 'Contract explorer'])
 })
 
 describe('auth', () => {
@@ -237,9 +237,9 @@ describe('runs and telemetry', () => {
     assert.equal((await hook({ hook_event_name: 'SessionStart', source: 'startup', model: 'claude-opus-5-5' })).status, 200)
     await hook({ hook_event_name: 'PreToolUse', tool_name: 'Bash', tool_use_id: 'tu1', tool_input: { command: 'npm test' } })
     await hook({ hook_event_name: 'PostToolUse', tool_name: 'Bash', tool_use_id: 'tu1', tool_input: { command: 'npm test' }, duration_ms: 1234 })
-    await hook({ hook_event_name: 'SubagentStart', agent_id: 'ag1', agent_type: 'Explore' })
-    await hook({ hook_event_name: 'PreToolUse', agent_id: 'ag1', agent_type: 'Explore', tool_name: 'Edit', tool_use_id: 'tu2', tool_input: { file_path: '/repo/src/a.ts' } })
-    await hook({ hook_event_name: 'SubagentStop', agent_id: 'ag1', agent_type: 'Explore', last_assistant_message: 'Found it' })
+    await hook({ hook_event_name: 'SubagentStart', agent_id: 'ag1', agent_type: 'Contract explorer' })
+    await hook({ hook_event_name: 'PreToolUse', agent_id: 'ag1', agent_type: 'Contract explorer', tool_name: 'Edit', tool_use_id: 'tu2', tool_input: { file_path: '/repo/src/a.ts' } })
+    await hook({ hook_event_name: 'SubagentStop', agent_id: 'ag1', agent_type: 'Contract explorer', last_assistant_message: 'Found it' })
 
     const main = (await admin.from('runs').select('*').eq('external_session_id', session).single()).data!
     assert.equal(main.model, 'claude-opus-5-5')

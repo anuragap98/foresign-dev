@@ -21,6 +21,7 @@ import { useUi } from '@/store/ui'
 import { useWorkspace } from '@/store/workspace'
 import { AgentSetupCard, GateBanner } from './AgentPanel'
 import { ConnectAgent } from './ConnectAgent'
+import { PlanGraph } from './PlanGraph'
 import { ProjectTimeline } from './ProjectTimeline'
 
 function OverviewCard({ project: p, now }: { project: Project; now: Date }) {
@@ -346,6 +347,7 @@ export function ProjectDetailPage() {
               </p>
             )}
           </Card>
+          <PlanGraph project={project} />
           <ProjectTasksCard project={project} now={now} />
         </div>
       </div>

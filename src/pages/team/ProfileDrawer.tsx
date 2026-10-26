@@ -1,4 +1,4 @@
-import { Mail, Moon, SquarePen, Sun } from 'lucide-react'
+import { Activity, Mail, Moon, SquarePen, Sun } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { ProgressRing } from '@/components/charts/Rings'
@@ -15,6 +15,7 @@ import { localClock, PRESENCE_TONE, TEAM_HUE, workload } from '@/lib/team'
 import { usePerson } from '@/store/people'
 import { useUi } from '@/store/ui'
 import { useWorkspace } from '@/store/workspace'
+import { AgentProfile } from './AgentProfile'
 
 function Section({ title, count, children }: { title: string; count: number; children: React.ReactNode }) {
   return (
@@ -181,6 +182,7 @@ export function ProfileDrawer({ personId }: { personId?: string }) {
   if (!shown) return null
 
   const first = shown.name.split(' ')[0]
+  const agent = shown.kind === 'agent'
 
   return (
     <Drawer
@@ -189,18 +191,26 @@ export function ProfileDrawer({ personId }: { personId?: string }) {
       title={shown.name}
       footer={
         <>
-          <Button asChild variant="soft">
-            <a href={`mailto:${shown.email}`}>
-              <Mail /> Email {shown.id === ME ? '' : first}
-            </a>
-          </Button>
+          {agent ? (
+            <Button asChild variant="soft">
+              <Link to="/runs">
+                <Activity /> Runs
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild variant="soft">
+              <a href={`mailto:${shown.email}`}>
+                <Mail /> Email {shown.id === ME ? '' : first}
+              </a>
+            </Button>
+          )}
           <Button variant="gel" className="ml-auto" onClick={() => newTask({ assignee: shown.id, due: dayKey(addDays(new Date(), 2)) })}>
             <SquarePen /> {shown.id === ME ? 'New task' : `Assign to ${first}`}
           </Button>
         </>
       }
     >
-      <ProfileBody person={shown} />
+      {agent ? <AgentProfile agent={shown} /> : <ProfileBody person={shown} />}
     </Drawer>
   )
 }

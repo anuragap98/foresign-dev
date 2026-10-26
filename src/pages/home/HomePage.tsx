@@ -10,6 +10,7 @@ import { fmtDate, fmtHours, fmtTime, greeting } from '@/lib/time'
 import { usePerson } from '@/store/people'
 import { useUi } from '@/store/ui'
 import { useWorkspace } from '@/store/workspace'
+import { AttentionCard } from './AttentionCard'
 import { FocusCard } from './FocusCard'
 import { MyTasksCard } from './MyTasksCard'
 import { ProjectsCard } from './ProjectsCard'
@@ -61,6 +62,7 @@ export function HomePage() {
       />
 
       <div className="grid grid-cols-1 gap-[var(--gap)] lg:grid-cols-2 xl:grid-cols-12">
+        <AttentionCard className="lg:col-span-2 xl:col-span-12" />
         <RingsCard stats={stats} className="xl:col-span-4" />
         <FocusCard focusMin={stats.focusMin} sessions={stats.focusSessions} className="xl:col-span-4" />
         <MyTasksCard className="lg:row-span-2 xl:col-span-4" />
