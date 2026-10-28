@@ -114,7 +114,7 @@ export const useFocus = create<FocusState>()(
       }
     },
     {
-      name: 'agent-panel:focus',
+      name: 'foresign:focus',
       partialize: ({ phase, minutes, endsAt, leftMs, startedAt, taskId }) => ({
         phase, minutes, endsAt, leftMs, startedAt, taskId,
       }),

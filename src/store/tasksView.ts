@@ -44,7 +44,7 @@ export const useTasksView = create<TasksViewState>()(
       clearFilters: () => set({ filters: NO_FILTERS }),
     }),
     {
-      name: 'agent-panel:tasks-view',
+      name: 'foresign:tasks-view',
       partialize: ({ layout, sort, collapsed }) => ({ layout, sort, collapsed }),
     },
   ),

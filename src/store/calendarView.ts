@@ -28,6 +28,6 @@ export const useCalendarView = create<CalendarViewState>()(
       select: (selected) => set({ selected }),
       today: () => set({ cursor: dayKey(), selected: dayKey() }),
     }),
-    { name: 'agent-panel:calendar-view', partialize: ({ layout }) => ({ layout }) },
+    { name: 'foresign:calendar-view', partialize: ({ layout }) => ({ layout }) },
   ),
 )
