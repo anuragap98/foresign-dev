@@ -134,7 +134,7 @@ export interface FocusEntry {
 
 export interface Notice {
   id: string
-  /** A person id, or 'pane' for reminders the app sends itself. */
+  /** A person id, or 'foresign' for reminders the app sends itself. */
   from: string
   kind?: 'mention' | 'review' | 'update' | 'reminder' | 'gate' | 'failure'
   text: string

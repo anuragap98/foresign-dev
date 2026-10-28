@@ -78,7 +78,7 @@ async function handle(ctx: Ctx, m: Message): Promise<unknown | null> {
       return reply({
         protocolVersion: VERSIONS.includes(asked) ? asked : VERSIONS[0],
         capabilities: { tools: { listChanged: false } },
-        serverInfo: { name: 'pane', title: 'Pane', version: '0.2.0' },
+        serverInfo: { name: 'foresign', title: 'Foresign', version: '0.2.0' },
         instructions: INSTRUCTIONS,
       })
     }

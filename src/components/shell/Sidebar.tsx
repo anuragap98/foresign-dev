@@ -58,9 +58,9 @@ export function Sidebar() {
       variant="chrome"
       className="fixed top-[14px] bottom-[14px] left-[14px] z-30 hidden w-[76px] flex-col rounded-card p-3 md:flex lg:w-[var(--side-w)]"
     >
-      <NavLink to="/home" className="mb-4 flex items-center gap-2.5 px-1.5 pt-1 max-lg:justify-center" aria-label="Pane, home">
+      <NavLink to="/home" className="mb-4 flex items-center gap-2.5 px-1.5 pt-1 max-lg:justify-center" aria-label="Foresign, home">
         <LogoMark />
-        <span className="display text-[20px] font-semibold max-lg:hidden">Pane</span>
+        <span className="display text-[20px] font-semibold max-lg:hidden">Foresign</span>
       </NavLink>
 
       <div ref={list} className="relative flex-1">

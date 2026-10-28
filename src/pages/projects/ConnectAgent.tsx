@@ -166,7 +166,7 @@ export function ConnectAgent({ project, open, onOpenChange }: { project: Project
                 <code className="min-w-0 flex-1 truncate font-mono text-[13px]">{token}</code>
                 <CopyButton text={token!} label="Copy token" />
               </div>
-              <p className="mt-1.5 pl-8 text-[12px] text-ink-2">Shown once. Pane keeps only a fingerprint of it, so copy what you need now.</p>
+              <p className="mt-1.5 pl-8 text-[12px] text-ink-2">Shown once. Foresign keeps only a fingerprint of it, so copy what you need now.</p>
             </div>
             {snippets.map((s, i) => (
               <SnippetBlock key={s.title} s={s} step={i + 1} />

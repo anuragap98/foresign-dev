@@ -242,7 +242,7 @@ function NotificationsSection() {
   const notify = useSettings((s) => s.notify)
   const setNotify = useSettings((s) => s.setNotify)
   return (
-    <Card title="Notifications" subtitle="What Pane taps you on the shoulder for">
+    <Card title="Notifications" subtitle="What Foresign taps you on the shoulder for">
       {NOTIFY_ROWS.map((r) => (
         <Row key={r.key} icon={r.icon} hue={r.hue} title={r.title} hint={r.hint} htmlFor={`notify-${r.key}`}>
           <Switch id={`notify-${r.key}`} checked={notify[r.key]} onCheckedChange={(on) => setNotify(r.key, on)} />
@@ -408,7 +408,7 @@ function DataSection() {
   useEffect(() => () => window.clearTimeout(timer.current), [])
 
   const exportCsv = () => {
-    const name = `pane-tasks-${dayKey()}.csv`
+    const name = `foresign-tasks-${dayKey()}.csv`
     downloadText(name, tasksCsv(tasks, projects, people))
     setSaved(name)
     window.clearTimeout(timer.current)
@@ -439,7 +439,7 @@ function DataSection() {
           }
         />
       )}
-      <Row icon={Database} hue="teal" title="Where things are kept" hint="Your workspace is stored in Pane’s database and shared with your team. Notification switches, focus lengths and the look stay on this device." />
+      <Row icon={Database} hue="teal" title="Where things are kept" hint="Your workspace is stored in Foresign’s database and shared with your team. Notification switches, focus lengths and the look stay on this device." />
     </Card>
   )
 }
@@ -453,7 +453,7 @@ export function SettingsPage() {
 
   return (
     <Page>
-      <PageHeader title="Settings" subtitle="Your profile, the look of Pane, and when it nudges you" />
+      <PageHeader title="Settings" subtitle="Your profile, the look of Foresign, and when it nudges you" />
 
       {/* Phones: sections as a scrolling row of chips */}
       <div data-enter className="-mx-[var(--gutter)] flex gap-2 overflow-x-auto px-[var(--gutter)] [scrollbar-width:none] lg:hidden">

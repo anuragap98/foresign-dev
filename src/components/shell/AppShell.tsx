@@ -32,7 +32,7 @@ export function AppShell() {
 
   useEffect(() => {
     const page = NAV.find((n) => pathname.startsWith(n.to))
-    document.title = projectName ? `${projectName} · Pane` : page ? `${page.label} · Pane` : 'Pane'
+    document.title = projectName ? `${projectName} · Foresign` : page ? `${page.label} · Foresign` : 'Foresign'
   }, [pathname, projectName])
 
   useEffect(() => {

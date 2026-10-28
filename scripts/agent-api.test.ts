@@ -60,7 +60,7 @@ async function call(name: string, args: Row = {}, token = tokens.a): Promise<Row
 const row = async (table: string, id: string) => (await admin.from(table).select('*').eq('id', id).single()).data as Row
 
 before(async () => {
-  const { error } = await person.auth.signInWithPassword({ email: 'lin@pane.app', password: 'pane-local-demo' })
+  const { error } = await person.auth.signInWithPassword({ email: 'lin@foresign.dev', password: 'foresign-local-demo' })
   assert.ifError(error)
   const { data: m } = await person.from('memberships').select('workspace_id').limit(1).single()
   workspaceId = m!.workspace_id
@@ -87,7 +87,7 @@ after(async () => {
 describe('auth', () => {
   test('refuses a missing or unknown token', async () => {
     assert.equal((await post('/mcp', { jsonrpc: '2.0', id: 1, method: 'ping' })).status, 401)
-    assert.equal((await post('/hooks', {}, 'pane_nope')).status, 401)
+    assert.equal((await post('/hooks', {}, 'foresign_nope')).status, 401)
   })
 
   test('the token is not readable by people', async () => {
@@ -103,7 +103,7 @@ describe('MCP protocol', () => {
   test('initialize, notifications and tools/list', async () => {
     const init = await rpc('initialize', { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test', version: '1' } })
     assert.equal(init.body.result.protocolVersion, '2025-06-18')
-    assert.equal(init.body.result.serverInfo.name, 'pane')
+    assert.equal(init.body.result.serverInfo.name, 'foresign')
     const note = await post('/mcp', { jsonrpc: '2.0', method: 'notifications/initialized' }, tokens.a)
     assert.equal(note.status, 202)
     const list = await rpc('tools/list')

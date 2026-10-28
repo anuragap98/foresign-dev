@@ -48,7 +48,7 @@ export function SignIn() {
         <div className="mb-6 flex items-center gap-3">
           <LogoMark size={40} />
           <div>
-            <h1 className="display text-[24px] font-bold">Sign in to Pane</h1>
+            <h1 className="display text-[24px] font-bold">Sign in to Foresign</h1>
             <p className="text-[13px] text-ink-2">Where your team and its agents ship</p>
           </div>
         </div>

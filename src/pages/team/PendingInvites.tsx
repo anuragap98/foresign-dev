@@ -46,7 +46,7 @@ export function PendingInvites() {
               </HueChip>
             </span>
             <Button asChild variant="ghost" size="icon" className="size-8">
-              <a href={`mailto:${i.email}?subject=${encodeURIComponent('Your invite to Pane')}`} aria-label={`Email ${i.name}`}>
+              <a href={`mailto:${i.email}?subject=${encodeURIComponent('Your invite to Foresign')}`} aria-label={`Email ${i.name}`}>
                 <Mail />
               </a>
             </Button>

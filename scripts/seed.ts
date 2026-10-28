@@ -16,9 +16,9 @@ import { AGENT_TASKS, AGENTS, ARTIFACTS, GATES, LEDGER, RUNS } from './demo/agen
 import { buildSeed, ME, PEOPLE } from './demo/workspace'
 
 // Local-only demo sign-in. Never use these anywhere but a local stack.
-const DEMO_EMAIL = 'lin@pane.app'
-const DEMO_PASSWORD = 'pane-local-demo'
-const WORKSPACE_NAME = 'Pane demo'
+const DEMO_EMAIL = 'lin@foresign.dev'
+const DEMO_PASSWORD = 'foresign-local-demo'
+const WORKSPACE_NAME = 'Foresign demo'
 
 function localEnv() {
   const out = execFileSync('npx', ['supabase', 'status', '-o', 'env'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] })
@@ -199,7 +199,7 @@ async function main() {
   // Feeds
   await insert('notifications', [
     ...ws.notices.map((n) => ({
-      workspace_id, recipient_id: actor(ME), from_actor_id: n.from === 'pane' ? null : actor(n.from), kind: n.kind ?? 'update',
+      workspace_id, recipient_id: actor(ME), from_actor_id: n.from === 'foresign' ? null : actor(n.from), kind: n.kind ?? 'update',
       text: n.text, read: n.read, created_at: n.at,
     })),
     { workspace_id, recipient_id: actor(ME), from_actor_id: actor('reviewer'), kind: 'gate', text: 'Reviewer is waiting for you to approve merging “Ledger core API” (#12)', read: false, created_at: ago(55) },

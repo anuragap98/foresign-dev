@@ -166,7 +166,7 @@ export async function loadSnapshot(workspaceId: string, meId: string, userId: st
     notices: notices
       .map((r) => ({
         id: r.id,
-        from: r.from_actor_id ?? 'pane',
+        from: r.from_actor_id ?? 'foresign',
         kind: r.kind,
         text: r.text,
         at: r.created_at,

@@ -40,7 +40,7 @@ export function NotificationsPopover() {
             {notices.map((n) => (
               <li key={n.id} className="flex gap-3 rounded-[16px] px-2.5 py-2.5 transition-colors hover:bg-fill-hover">
                 <span className={cn('mt-3.5 size-1.5 shrink-0 rounded-full', n.read ? 'bg-transparent' : 'bg-accent-ink')} />
-                {n.from === 'pane' ? (
+                {n.from === 'foresign' ? (
                   <span className="gel flex size-[30px] shrink-0 items-center justify-center rounded-full">
                     <Bell className="size-4" />
                   </span>

@@ -309,7 +309,7 @@ export const useWorkspace = create<WorkspaceState>()((set, get) => {
       const notice: Notice = { ...n, id: newId(), at: now(), read: false, dedupeKey: key }
       set((s) => ({ notices: [notice, ...s.notices] }))
       const row = {
-        id: notice.id, workspace_id: WORKSPACE_ID, recipient_id: ME, from_actor_id: n.from === 'pane' ? null : n.from,
+        id: notice.id, workspace_id: WORKSPACE_ID, recipient_id: ME, from_actor_id: n.from === 'foresign' ? null : n.from,
         kind: n.kind ?? 'update', text: n.text, dedupe_key: key ?? null,
       }
       // Another tab may have sent the same keyed reminder; the database keeps the first.
