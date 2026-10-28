@@ -36,7 +36,7 @@ export const useSettings = create<SettingsState>()(
       setBreakMin: (n) => set({ breakMin: clampTo(n, FOCUS_LIMITS.break) }),
     }),
     {
-      name: 'agent-panel:settings',
+      name: 'foresign:settings',
       version: 2,
       // v1 also stored a profile override; that now lives in the database.
       migrate: (old) => {

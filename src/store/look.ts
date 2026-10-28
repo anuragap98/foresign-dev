@@ -44,7 +44,7 @@ export const DEFAULT_LOOK: Look = { theme: 'dark', wall: 'ash', accent: 'blue', 
 
 export const useLook = create<LookState>()(
   persist((set) => ({ ...DEFAULT_LOOK, set: (patch) => set(patch) }), {
-    name: 'agent-panel:look',
+    name: 'foresign:look',
     partialize: ({ theme, wall, accent, glass, solid }) => ({ theme, wall, accent, glass, solid }),
   }),
 )

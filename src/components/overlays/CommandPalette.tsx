@@ -200,7 +200,7 @@ export function CommandPalette() {
           className="anim-pop fixed top-[12vh] left-1/2 z-50 w-[min(620px,calc(100vw-24px))] -translate-x-1/2 outline-none"
           aria-describedby={undefined}
         >
-          <Dialog.Title className="sr-only">Search Pane</Dialog.Title>
+          <Dialog.Title className="sr-only">Search Foresign</Dialog.Title>
           <PaletteBody />
         </Dialog.Content>
       </Dialog.Portal>

@@ -9,7 +9,7 @@ export const db = createClient(
 )
 
 /** Calls per token per minute. Hooks send two per tool call, so this is generous. */
-const RATE_LIMIT = Number(Deno.env.get('PANE_AGENT_RATE_LIMIT') ?? 1200)
+const RATE_LIMIT = Number(Deno.env.get('FORESIGN_AGENT_RATE_LIMIT') ?? 1200)
 
 /** Who is calling: a token is tied to one project and the agent it acts as. */
 export interface Ctx {
@@ -51,7 +51,7 @@ async function sha256(text: string) {
 export async function authenticate(req: Request): Promise<Ctx> {
   const header = req.headers.get('authorization') ?? ''
   const token = header.match(/^Bearer\s+(\S+)$/i)?.[1]
-  if (!token) throw new AgentError('Missing token. Send "Authorization: Bearer pane_…" from Pane’s Connect an agent panel.', 401)
+  if (!token) throw new AgentError('Missing token. Send "Authorization: Bearer foresign_…" from Foresign’s Connect an agent panel.', 401)
   const rows = must(await db.rpc('agent_auth', { p_hash: await sha256(token), p_limit: RATE_LIMIT }), 'Checking the token') as Row[]
   const t = rows?.[0]
   if (!t) throw new AgentError('This token is unknown or was revoked.', 401)
@@ -125,7 +125,7 @@ export async function currentRun(ctx: Ctx, runId?: string): Promise<Row> {
 const findSession = (ctx: Ctx, externalId: string) =>
   db.from('runs').select('*').eq('workspace_id', ctx.workspaceId).eq('external_session_id', externalId).maybeSingle()
 
-/** The run for an agent tool's session id, if Pane has seen that session. */
+/** The run for an agent tool's session id, if Foresign has seen that session. */
 export async function existingSessionRun(ctx: Ctx, externalId: string): Promise<Row | null> {
   return must(await findSession(ctx, externalId), 'Finding the session’s run')
 }

@@ -41,7 +41,7 @@ function InviteFields({ onDone }: { onDone: () => void }) {
           type="email"
           required
           autoComplete="off"
-          placeholder="sam@pane.app"
+          placeholder="sam@foresign.dev"
           value={form.email}
           onChange={(e) => set('email', e.target.value)}
           aria-invalid={!!error}

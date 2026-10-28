@@ -25,18 +25,18 @@ export const ME = 'lin'
 const soon = (mins: number) => `until ${fmtTime(new Date(Date.now() + mins * MIN))}`
 
 export const PEOPLE: DemoPerson[] = [
-  { id: 'lin', name: 'Lin Zhao', role: 'Product Lead', team: 'Product', presence: 'online', city: 'London', tz: 'Europe/London', capacityH: 32, focusWeekH: 6, email: 'lin@pane.app', hue: 'blue' },
-  { id: 'nia', name: 'Nia Okoro', role: 'Design Lead', team: 'Design', presence: 'focus', presenceNote: soon(47), city: 'Lagos', tz: 'Africa/Lagos', capacityH: 32, focusWeekH: 4, email: 'nia@pane.app', hue: 'purple' },
-  { id: 'elise', name: 'Elise Marchand', role: 'Product Designer', team: 'Design', presence: 'online', city: 'Lyon', tz: 'Europe/Paris', capacityH: 36, focusWeekH: 9, email: 'elise@pane.app', hue: 'pink' },
-  { id: 'kwame', name: 'Kwame Asante', role: 'iOS Engineer', team: 'Engineering', presence: 'meeting', presenceNote: 'Tide sync review', city: 'Accra', tz: 'Africa/Accra', capacityH: 36, focusWeekH: 7, email: 'kwame@pane.app', hue: 'orange' },
-  { id: 'peter', name: 'Peter Lund', role: 'Engineering Manager', team: 'Engineering', presence: 'online', city: 'Copenhagen', tz: 'Europe/Copenhagen', capacityH: 28, focusWeekH: 2, email: 'peter@pane.app', hue: 'teal' },
-  { id: 'freya', name: 'Freya Nilsen', role: 'Brand Designer', team: 'Design', presence: 'away', city: 'Bergen', tz: 'Europe/Oslo', capacityH: 32, focusWeekH: 5, email: 'freya@pane.app', hue: 'yellow' },
-  { id: 'omar', name: 'Omar Saleh', role: 'Backend Engineer', team: 'Engineering', presence: 'focus', presenceNote: soon(47), city: 'Amman', tz: 'Asia/Amman', capacityH: 36, focusWeekH: 11, email: 'omar@pane.app', hue: 'green' },
-  { id: 'haruto', name: 'Haruto Sato', role: 'Frontend Engineer', team: 'Engineering', presence: 'online', city: 'Tokyo', tz: 'Asia/Tokyo', capacityH: 36, focusWeekH: 8, email: 'haruto@pane.app', hue: 'indigo' },
-  { id: 'ines', name: 'Inés Duarte', role: 'Marketing Lead', team: 'Marketing', presence: 'meeting', presenceNote: 'Press briefing', city: 'Lisbon', tz: 'Europe/Lisbon', capacityH: 32, focusWeekH: 3, email: 'ines@pane.app', hue: 'pink' },
-  { id: 'vikram', name: 'Vikram Nair', role: 'Data Analyst', team: 'Product', presence: 'online', city: 'Bengaluru', tz: 'Asia/Kolkata', capacityH: 32, focusWeekH: 6, email: 'vikram@pane.app', hue: 'teal' },
-  { id: 'camila', name: 'Camila Ortiz', role: 'Content Strategist', team: 'Marketing', presence: 'away', city: 'Mexico City', tz: 'America/Mexico_City', capacityH: 28, focusWeekH: 4, email: 'camila@pane.app', hue: 'orange' },
-  { id: 'malik', name: 'Malik Johnson', role: 'QA Engineer', team: 'Engineering', presence: 'away', city: 'Atlanta', tz: 'America/New_York', capacityH: 36, focusWeekH: 5, email: 'malik@pane.app', hue: 'purple' },
+  { id: 'lin', name: 'Lin Zhao', role: 'Product Lead', team: 'Product', presence: 'online', city: 'London', tz: 'Europe/London', capacityH: 32, focusWeekH: 6, email: 'lin@foresign.dev', hue: 'blue' },
+  { id: 'nia', name: 'Nia Okoro', role: 'Design Lead', team: 'Design', presence: 'focus', presenceNote: soon(47), city: 'Lagos', tz: 'Africa/Lagos', capacityH: 32, focusWeekH: 4, email: 'nia@foresign.dev', hue: 'purple' },
+  { id: 'elise', name: 'Elise Marchand', role: 'Product Designer', team: 'Design', presence: 'online', city: 'Lyon', tz: 'Europe/Paris', capacityH: 36, focusWeekH: 9, email: 'elise@foresign.dev', hue: 'pink' },
+  { id: 'kwame', name: 'Kwame Asante', role: 'iOS Engineer', team: 'Engineering', presence: 'meeting', presenceNote: 'Tide sync review', city: 'Accra', tz: 'Africa/Accra', capacityH: 36, focusWeekH: 7, email: 'kwame@foresign.dev', hue: 'orange' },
+  { id: 'peter', name: 'Peter Lund', role: 'Engineering Manager', team: 'Engineering', presence: 'online', city: 'Copenhagen', tz: 'Europe/Copenhagen', capacityH: 28, focusWeekH: 2, email: 'peter@foresign.dev', hue: 'teal' },
+  { id: 'freya', name: 'Freya Nilsen', role: 'Brand Designer', team: 'Design', presence: 'away', city: 'Bergen', tz: 'Europe/Oslo', capacityH: 32, focusWeekH: 5, email: 'freya@foresign.dev', hue: 'yellow' },
+  { id: 'omar', name: 'Omar Saleh', role: 'Backend Engineer', team: 'Engineering', presence: 'focus', presenceNote: soon(47), city: 'Amman', tz: 'Asia/Amman', capacityH: 36, focusWeekH: 11, email: 'omar@foresign.dev', hue: 'green' },
+  { id: 'haruto', name: 'Haruto Sato', role: 'Frontend Engineer', team: 'Engineering', presence: 'online', city: 'Tokyo', tz: 'Asia/Tokyo', capacityH: 36, focusWeekH: 8, email: 'haruto@foresign.dev', hue: 'indigo' },
+  { id: 'ines', name: 'Inés Duarte', role: 'Marketing Lead', team: 'Marketing', presence: 'meeting', presenceNote: 'Press briefing', city: 'Lisbon', tz: 'Europe/Lisbon', capacityH: 32, focusWeekH: 3, email: 'ines@foresign.dev', hue: 'pink' },
+  { id: 'vikram', name: 'Vikram Nair', role: 'Data Analyst', team: 'Product', presence: 'online', city: 'Bengaluru', tz: 'Asia/Kolkata', capacityH: 32, focusWeekH: 6, email: 'vikram@foresign.dev', hue: 'teal' },
+  { id: 'camila', name: 'Camila Ortiz', role: 'Content Strategist', team: 'Marketing', presence: 'away', city: 'Mexico City', tz: 'America/Mexico_City', capacityH: 28, focusWeekH: 4, email: 'camila@foresign.dev', hue: 'orange' },
+  { id: 'malik', name: 'Malik Johnson', role: 'QA Engineer', team: 'Engineering', presence: 'away', city: 'Atlanta', tz: 'America/New_York', capacityH: 36, focusWeekH: 5, email: 'malik@foresign.dev', hue: 'purple' },
 ]
 
 export const PEOPLE_BY_ID = Object.fromEntries(PEOPLE.map((p) => [p.id, p])) as Record<string, DemoPerson>
@@ -216,7 +216,7 @@ export function buildSeed(now = new Date()): Workspace {
     },
     {
       id: 'facet', name: 'Facet design system', hue: 'pink', icon: 'grid', status: 'progress', pinned: false,
-      summary: 'One set of tokens, components and docs for every Pane surface, light and dark.',
+      summary: 'One set of tokens, components and docs for every Foresign surface, light and dark.',
       lead: 'nia', members: ['nia', 'elise', 'haruto'], started: day(-50), due: day(60),
       milestones: [
         { id: 'facet-m1', title: 'Token pipeline', date: day(-15), done: true },

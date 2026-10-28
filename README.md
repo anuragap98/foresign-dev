@@ -1,9 +1,10 @@
-# Pane
+# Foresign
 
 A liquid-glass workspace for teams and the coding agents working with them: Home, tasks, calendar,
 projects, insights, team and settings, backed by Postgres. Coding agents connect over MCP, hooks and
 OpenTelemetry to plan work, report progress and cost, and wait for people at approval gates.
-The original feature reference is in [docs/pane-reference-spec.md](docs/pane-reference-spec.md).
+The original feature reference, captured from the "Pane" demo this project started from, is in
+[docs/pane-reference-spec.md](docs/pane-reference-spec.md).
 
 ## Run it locally
 
@@ -38,7 +39,7 @@ local stack in Docker and runs the contract and browser tests.
 
 ## Connecting an agent
 
-Open a project and choose **Connect an agent**. Pane creates a token for that project, shows it once
+Open a project and choose **Connect an agent**. Foresign creates a token for that project, shows it once
 and gives you the set-up to paste:
 
 - **MCP tools** (Claude Code, Cursor, Codex): `get_project`, `get_task`, `propose_plan`, `create_task`,
@@ -112,12 +113,12 @@ Teammates' focus hours in Insights are sample figures; everything else is comput
 ## Roadmap
 
 The plan for agentic development: agents (Claude Code, Codex, Cursor…) plan and carry out the work
-while Pane tracks it, with human approval gates.
+while Foresign tracks it, with human approval gates.
 
 1. **Agent-ready backend** (done): schema, sign-in, data from Postgres, demo agent project.
-2. **Agent connection** (done): Pane MCP server, per-project agent tokens, Claude Code hooks and OpenTelemetry ingest.
+2. **Agent connection** (done): Foresign MCP server, per-project agent tokens, Claude Code hooks and OpenTelemetry ingest.
 3. **Observability views** (done): runs with run tree and trace timeline, agent-aware board and drawer, plan view,
    approval banner, Team & agents, Needs your attention, agent metrics.
 4. **Hardening** (in progress): done: stale-run cleanup, unit, contract and browser tests, CI.
    Still to do: error monitoring, a staging environment, backups.
-5. **Software factory**: Pane dispatches work to agents it starts itself.
+5. **Software factory**: Foresign dispatches work to agents it starts itself.

@@ -1,4 +1,4 @@
-// Pane's agent API. Every route takes "Authorization: Bearer <agent token>".
+// Foresign's agent API. Every route takes "Authorization: Bearer <agent token>".
 //   POST /agent/mcp             MCP over Streamable HTTP (JSON replies)
 //   POST /agent/hooks           Claude Code hook events
 //   POST /agent/otlp/v1/logs    OpenTelemetry logs (OTLP/HTTP JSON)
@@ -12,7 +12,7 @@ const MAX_BODY = 1_000_000
 
 function problem(e: unknown, mcp: boolean) {
   const status = e instanceof AgentError ? e.status : 500
-  const message = e instanceof AgentError ? e.message : 'Pane hit an unexpected error.'
+  const message = e instanceof AgentError ? e.message : 'Foresign hit an unexpected error.'
   if (!(e instanceof AgentError)) console.error(e)
   return mcp
     ? Response.json({ jsonrpc: '2.0', id: null, error: { code: -32001, message } }, { status })
@@ -37,7 +37,7 @@ Deno.serve(async (req) => {
   const mcp = path === '/mcp'
 
   if (req.method === 'GET' && path === '/') {
-    return Response.json({ name: 'pane-agent-api', routes: ['/mcp', '/hooks', '/otlp/v1/logs', '/otlp/v1/metrics'] })
+    return Response.json({ name: 'foresign-agent-api', routes: ['/mcp', '/hooks', '/otlp/v1/logs', '/otlp/v1/metrics'] })
   }
   if (req.method !== 'POST') {
     // Stateless MCP: there is no event stream to open and no session to delete.

@@ -41,7 +41,7 @@ const STATUS_LABEL: Record<string, string> = {
   blocked: 'Blocked', failed: 'Failed', awaiting_approval: 'Awaiting approval',
 }
 
-const taskId = z.string().min(1).describe('The task’s Pane id, or the ref you gave it in propose_plan or create_task')
+const taskId = z.string().min(1).describe('The task’s Foresign id, or the ref you gave it in propose_plan or create_task')
 const runId = z.uuid().optional().describe('Your run id from start_run. Leave out to use your current run.')
 const priority = z.enum(['low', 'medium', 'high', 'urgent'])
 
@@ -80,9 +80,9 @@ async function checkBudget(ctx: Ctx, project?: Row) {
   if (p.budget_usd === null && p.budget_tokens === null) return
   const s = await spend(ctx)
   if (p.budget_usd !== null && s.usd >= Number(p.budget_usd))
-    throw new AgentError(`Budget reached: $${s.usd.toFixed(2)} of $${Number(p.budget_usd).toFixed(2)} spent. Ask a person to raise it in Pane.`, 409)
+    throw new AgentError(`Budget reached: $${s.usd.toFixed(2)} of $${Number(p.budget_usd).toFixed(2)} spent. Ask a person to raise it in Foresign.`, 409)
   if (p.budget_tokens !== null && s.tokens >= Number(p.budget_tokens))
-    throw new AgentError(`Token budget reached: ${s.tokens.toLocaleString()} of ${Number(p.budget_tokens).toLocaleString()} used. Ask a person to raise it in Pane.`, 409)
+    throw new AgentError(`Token budget reached: ${s.tokens.toLocaleString()} of ${Number(p.budget_tokens).toLocaleString()} used. Ask a person to raise it in Foresign.`, 409)
 }
 
 async function actorName(id?: string | null) {
@@ -149,7 +149,7 @@ const planTask = z.strictObject({
   priority: priority.optional(),
   est_h: z.number().positive().max(200).optional().describe('Estimate in hours'),
   due: z.iso.date().optional().describe('YYYY-MM-DD. Defaults to the project’s due date.'),
-  depends_on: z.array(z.string()).max(50).optional().describe('Refs (or Pane ids) of tasks that must be done first'),
+  depends_on: z.array(z.string()).max(50).optional().describe('Refs (or Foresign ids) of tasks that must be done first'),
   parent: z.string().optional().describe('Ref of the task this one is split from'),
 })
 
@@ -454,10 +454,10 @@ export const TOOLS: Tool[] = [
     name: 'start_run',
     title: 'Start a run',
     description:
-      'Opens a run, the unit Pane uses to trace and cost agent work. With no arguments it returns your current run (hooks may have opened it already). ' +
+      'Opens a run, the unit Foresign uses to trace and cost agent work. With no arguments it returns your current run (hooks may have opened it already). ' +
       'For a sub-agent, pass agent_name (e.g. "Test writer") and the parent run id; the sub-agent then passes the returned run_id to its own calls and calls end_run when finished.',
     input: z.strictObject({
-      agent_name: z.string().min(1).max(60).optional().describe('The sub-agent’s name; it shows in Pane’s team list'),
+      agent_name: z.string().min(1).max(60).optional().describe('The sub-agent’s name; it shows in Foresign’s team list'),
       role: z.string().max(120).optional().describe('e.g. "Sub-agent · writes tests"'),
       parent_run_id: z.uuid().optional(),
       task_id: taskId.optional(),
@@ -661,7 +661,7 @@ export const TOOLS: Tool[] = [
 ]
 
 export const INSTRUCTIONS = [
-  'Pane is where people track this project and approve agent work. Report your work here as you go.',
+  'Foresign is where people track this project and approve agent work. Report your work here as you go.',
   '1. Call get_project to read the goal, the existing tasks and which approval gates are on.',
   '2. If there is no plan yet, propose_plan with the whole task graph. If it returns a gate, wait_for_gate until a person approves it; revise with propose_plan if they ask for changes.',
   '3. For each task whose dependencies are done: claim_task, do the work, attach_artifact for branches, commits and pull requests, then update_task to review or done. Use blocked or failed with a note when stuck.',

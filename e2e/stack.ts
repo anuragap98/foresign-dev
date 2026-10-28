@@ -16,7 +16,7 @@ const env = Object.fromEntries(
 export const AGENT_API = `${env.API_URL}/functions/v1/agent`
 export const admin = createClient(env.API_URL, env.SERVICE_ROLE_KEY, { auth: { persistSession: false } })
 
-const DEMO = { email: 'lin@pane.app', password: 'pane-local-demo' }
+const DEMO = { email: 'lin@foresign.dev', password: 'foresign-local-demo' }
 
 /** Signs in through the app's own button. */
 export async function signIn(page: Page, path = '/home') {
@@ -53,7 +53,7 @@ export async function testProject(label: string): Promise<TestProject> {
 }
 
 let rpcId = 0
-/** Calls one of Pane's MCP tools as the project's agent. */
+/** Calls one of Foresign's MCP tools as the project's agent. */
 export async function agentCall(token: string, name: string, args: Record<string, unknown> = {}) {
   const res = await fetch(`${AGENT_API}/mcp`, {
     method: 'POST',

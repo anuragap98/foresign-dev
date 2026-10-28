@@ -285,7 +285,7 @@ export function InsightsPage() {
       return [key, data.cur.perDay[i], doneThatDay.filter((t) => key <= t.due).length, data.prev.perDay[i], data.cur.focusPerDay[i]]
     })
     downloadText(
-      `pane-insights-${range}d-${today}.csv`,
+      `foresign-insights-${range}d-${today}.csv`,
       toCsv([['Date', 'Tasks completed', 'Completed on time', `Completed ${range} days earlier`, 'Team focus hours'], ...rows]),
     )
   }

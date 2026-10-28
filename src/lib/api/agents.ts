@@ -96,18 +96,18 @@ export function setupSnippets(token: string): Record<'claude' | 'cursor' | 'code
   }
   const mcp = {
     title: 'Tools for planning and reporting',
-    hint: 'Gives the agent Pane’s tools: read the project, propose a plan, claim tasks, ask for approval.',
+    hint: 'Gives the agent Foresign’s tools: read the project, propose a plan, claim tasks, ask for approval.',
   }
   return {
     claude: [
       {
         ...mcp,
         hint: `${mcp.hint} Run it in the repo; it’s saved for you only.`,
-        code: `claude mcp add --transport http pane ${AGENT_API}/mcp --header "Authorization: ${auth}"`,
+        code: `claude mcp add --transport http foresign ${AGENT_API}/mcp --header "Authorization: ${auth}"`,
       },
       {
         title: 'Automatic tracing',
-        hint: 'Hooks send every prompt, tool call and sub-agent to Pane, with no effort from the agent. Merge into this file, and keep it out of git.',
+        hint: 'Hooks send every prompt, tool call and sub-agent to Foresign, with no effort from the agent. Merge into this file, and keep it out of git.',
         file: '.claude/settings.local.json',
         code: JSON.stringify(claudeSettings, null, 2),
       },
@@ -118,22 +118,22 @@ export function setupSnippets(token: string): Record<'claude' | 'cursor' | 'code
       },
       {
         title: 'Then ask it to start',
-        hint: 'A first prompt that follows Pane’s flow.',
-        code: 'Use the pane tools: read the project, propose a plan with dependencies, and wait for my approval before you start. Use sub-agents for independent tasks.',
+        hint: 'A first prompt that follows Foresign’s flow.',
+        code: 'Use the foresign tools: read the project, propose a plan with dependencies, and wait for my approval before you start. Use sub-agents for independent tasks.',
       },
     ],
     cursor: [
       {
         ...mcp,
         file: '.cursor/mcp.json',
-        code: JSON.stringify({ mcpServers: { pane: { url: `${AGENT_API}/mcp`, headers: { Authorization: auth } } } }, null, 2),
+        code: JSON.stringify({ mcpServers: { foresign: { url: `${AGENT_API}/mcp`, headers: { Authorization: auth } } } }, null, 2),
       },
     ],
     codex: [
       {
         ...mcp,
         file: '~/.codex/config.toml',
-        code: [`[mcp_servers.pane]`, `url = "${AGENT_API}/mcp"`, `http_headers = { Authorization = "${auth}" }`].join('\n'),
+        code: [`[mcp_servers.foresign]`, `url = "${AGENT_API}/mcp"`, `http_headers = { Authorization = "${auth}" }`].join('\n'),
       },
     ],
   }

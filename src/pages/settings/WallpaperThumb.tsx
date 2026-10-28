@@ -11,7 +11,7 @@ interface ThumbProps {
 }
 
 /**
- * A tiny Pane rendered on a wallpaper. The wrapper carries its own
+ * A tiny copy of the app rendered on a wallpaper. The wrapper carries its own
  * data-theme/data-wall, so the same CSS variables as the real app resolve
  * inside it and each thumbnail is an honest preview.
  */

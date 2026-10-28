@@ -148,7 +148,7 @@ export const RUNS: DemoRun[] = [
     key: 'lead', agent: 'lead', status: 'running', startedMinAgo: 26 * 60, tokensIn: 412_000, tokensOut: 38_500, costUsd: 9.42,
     model: 'claude-opus-5-5', summary: 'Coordinating the Ledger API build: plan approved, core endpoints done, waiting on merge approval.',
     events: [
-      [0, 'message', 'Read project goal', 1200, 'Loaded the goal and must-haves from Pane.'],
+      [0, 'message', 'Read project goal', 1200, 'Loaded the goal and must-haves from Foresign.'],
       [3, 'tool_call', 'Task', 900, 'Started sub-agent: Planner'],
       [22, 'note', 'Plan gate requested', 300, 'Proposed 10 tasks with dependencies; waiting for approval.'],
       [41, 'note', 'Plan approved', 200, 'Lin approved the plan.'],
@@ -164,14 +164,14 @@ export const RUNS: DemoRun[] = [
       [0, 'tool_call', 'Read', 140, 'README.md'],
       [2, 'tool_call', 'Glob', 60, 'src/**/*.ts'],
       [9, 'message', 'Drafted plan', 4200, '10 tasks, critical path: schema → journal → tests → deploy'],
-      [17, 'tool_call', 'pane.propose_plan', 380, '10 tasks, 14 dependencies'],
+      [17, 'tool_call', 'foresign.propose_plan', 380, '10 tasks, 14 dependencies'],
     ],
   },
   {
     key: 'build-core', agent: 'builder', parent: 'lead', task: 'journal', status: 'succeeded', startedMinAgo: 26 * 60 - 44, endedMinAgo: 180,
     tokensIn: 290_000, tokensOut: 61_000, costUsd: 2.04, model: 'claude-sonnet-5-5', summary: 'Schema, scaffold, accounts and journal entries; journal needed a second attempt after a failing balance check.',
     events: [
-      [0, 'tool_call', 'pane.claim_task', 120, 'Design the ledger schema'],
+      [0, 'tool_call', 'foresign.claim_task', 120, 'Design the ledger schema'],
       [6, 'file_edit', 'Write', 90, 'migrations/001_ledger.sql'],
       [14, 'command', 'npm run db:migrate', 2300, 'Applied 1 migration'],
       [30, 'file_edit', 'Write', 110, 'src/server.ts'],
@@ -182,18 +182,18 @@ export const RUNS: DemoRun[] = [
       [962, 'error', 'Test failure', 0, 'Expected 422, received 201 for unbalanced lines'],
       [990, 'file_edit', 'Edit', 95, 'src/routes/entries.ts: sum lines in minor units'],
       [1000, 'command', 'npm test -- entries', 7900, '12 passed'],
-      [1010, 'tool_call', 'pane.attach_artifact', 140, 'Commit 3f9c2ab'],
+      [1010, 'tool_call', 'foresign.attach_artifact', 140, 'Commit 3f9c2ab'],
     ],
   },
   {
     key: 'build-next', agent: 'builder', parent: 'lead', task: 'balances', status: 'running', startedMinAgo: 170,
     tokensIn: 96_000, tokensOut: 14_800, costUsd: 0.62, model: 'claude-sonnet-5-5', summary: 'Working on point-in-time balances; idempotency is in review.',
     events: [
-      [0, 'tool_call', 'pane.claim_task', 110, 'Idempotency keys on POST'],
+      [0, 'tool_call', 'foresign.claim_task', 110, 'Idempotency keys on POST'],
       [25, 'file_edit', 'Write', 130, 'src/middleware/idempotency.ts'],
       [40, 'command', 'npm test -- idempotency', 5200, '6 passed'],
-      [45, 'tool_call', 'pane.update_task', 90, 'Idempotency keys on POST → In review'],
-      [60, 'tool_call', 'pane.claim_task', 100, 'Balance calculation'],
+      [45, 'tool_call', 'foresign.update_task', 90, 'Idempotency keys on POST → In review'],
+      [60, 'tool_call', 'foresign.claim_task', 100, 'Balance calculation'],
       [95, 'file_edit', 'Write', 150, 'src/routes/balances.ts'],
     ],
   },
@@ -201,7 +201,7 @@ export const RUNS: DemoRun[] = [
     key: 'tests', agent: 'tester', parent: 'lead', task: 'tests', status: 'running', startedMinAgo: 95,
     tokensIn: 41_000, tokensOut: 8_100, costUsd: 0.09, model: 'claude-haiku-5-5', summary: 'Writing integration tests for journal entries.',
     events: [
-      [0, 'tool_call', 'pane.claim_task', 90, 'Integration tests for journal entries'],
+      [0, 'tool_call', 'foresign.claim_task', 90, 'Integration tests for journal entries'],
       [12, 'file_edit', 'Write', 120, 'test/entries.test.ts'],
       [40, 'command', 'npm test -- test/entries.test.ts', 11200, '18 passed, 2 skipped'],
       [70, 'file_edit', 'Edit', 80, 'test/entries.test.ts: concurrent posts'],
@@ -213,7 +213,7 @@ export const RUNS: DemoRun[] = [
     events: [
       [0, 'tool_call', 'Bash', 1900, 'gh pr diff 12'],
       [18, 'message', 'Review notes', 3100, 'Two nits, no blockers. Idempotency store needs a TTL.'],
-      [25, 'tool_call', 'pane.request_gate', 210, 'Merge “Ledger core API” (#12)'],
+      [25, 'tool_call', 'foresign.request_gate', 210, 'Merge “Ledger core API” (#12)'],
     ],
   },
 ]

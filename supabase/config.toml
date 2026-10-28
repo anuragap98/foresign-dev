@@ -2,7 +2,7 @@
 # https://supabase.com/docs/guides/local-development/cli/config
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
-project_id = "agent-panel"
+project_id = "foresign"
 
 [api]
 enabled = true
@@ -415,6 +415,6 @@ enabled = true
 # and column/key alignment. Set to "null" to emit raw, unformatted SQL.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":180,\"commaStyle\":\"trailing\"}"
 
-# Agents send Pane agent tokens, not Supabase sign-in tokens; the function checks them itself.
+# Agents send Foresign agent tokens, not Supabase sign-in tokens; the function checks them itself.
 [functions.agent]
 verify_jwt = false

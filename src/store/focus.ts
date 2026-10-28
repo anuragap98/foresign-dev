@@ -40,7 +40,7 @@ export const useFocus = create<FocusState>()(
         const spent = Math.round((minutes * MIN - left) / MIN)
         if (spent >= 1) {
           if (finished && useSettings.getState().notify.focusEnd)
-            useWorkspace.getState().notify({ from: 'pane', kind: 'update', text: `Focus session finished · ${spent} minutes logged` })
+            useWorkspace.getState().notify({ from: 'foresign', kind: 'update', text: `Focus session finished · ${spent} minutes logged` })
           useWorkspace.getState().logFocus({
             start: new Date(startedAt).toISOString(),
             minutes: spent,
@@ -114,7 +114,7 @@ export const useFocus = create<FocusState>()(
       }
     },
     {
-      name: 'agent-panel:focus',
+      name: 'foresign:focus',
       partialize: ({ phase, minutes, endsAt, leftMs, startedAt, taskId }) => ({
         phase, minutes, endsAt, leftMs, startedAt, taskId,
       }),

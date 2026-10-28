@@ -113,12 +113,12 @@ export function Boot({ children }: { children: ReactNode }) {
 
   if (!supabaseConfigured)
     return (
-      <Screen title="Pane needs its database">
+      <Screen title="Foresign needs its database">
         Start the local stack and seed it: <code className="rounded bg-fill-2 px-1">npm run db:start</code> then{' '}
         <code className="rounded bg-fill-2 px-1">npm run db:seed</code>, and restart <code className="rounded bg-fill-2 px-1">npm run dev</code>.
       </Screen>
     )
-  if (session === undefined) return <Screen title="Pane" />
+  if (session === undefined) return <Screen title="Foresign" />
   if (!session) return <SignIn />
   return (
     <>
